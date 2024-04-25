@@ -6,7 +6,7 @@ on:
 
 jobs:
   Firefox-Focus:
-    runs-on: macos-14
+    runs-on: macos-14-arm64
     steps:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
