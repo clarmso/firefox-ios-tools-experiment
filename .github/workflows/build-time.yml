@@ -54,4 +54,4 @@ jobs:
       - name: Size of source and app file (Focus)
         run: |
           du -sh focus-ios
-          du -sh ~/Library/Developer/Xcode/DerivedData/Client-*/Build/Products/Fennec-iphonesimulator/Client.app  
+          du -sh ~/Library/Developer/Xcode/DerivedData/Blockzilla-*/Build/Products/FocusDebug-iphonesimulator/Firefox\ Focus.app
