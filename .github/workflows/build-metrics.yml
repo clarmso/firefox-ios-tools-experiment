@@ -1,4 +1,4 @@
-name: Firefox iOS build time
+name: Firefox & Focus iOS build metrics
 on:
   push:
     branches:
@@ -29,29 +29,37 @@ jobs:
           sudo rm -rf /Applications/Xcode.app
           sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
           xcodebuild -version
-      - name: Resolve dependencies (Firefox)
-        run: xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
+  firefox:
+    runs-on: macos-14
+    needs: prerequisite
+    defaults:
+      run:
         working-directory: ./firefox-ios
+    steps:
+      - name: Resolve dependencies
+        run: xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
       - name: Build Firefox
         run: |
-          rm -fr ~/Library/Developer/Xcode/DerivedData/* 
-          rm -fr ~/Library/Caches/org.swift.swiftpm/repositories
+          rm -fr ~/Library/Developer/Xcode/DerivedData/Client-* 
           time xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
-        working-directory: ./firefox-ios
-      - name: Size of source and app file (Firefox)
+      - name: Size of source and app file
         run: |
-          du -sh firefox-ios
+          du -sh .
           du -sh ~/Library/Developer/Xcode/DerivedData/Client-*/Build/Products/Fennec-iphonesimulator/Client.app
-      - name: Resolve dependencies (Focus)
-        run: xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
+   focus:
+    runs-on: macos-14
+    needs: prerequisite
+    defaults:
+      run:
         working-directory: ./focus-ios
+    steps:
+      - name: Resolve dependencies
+        run: xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
       - name: Build Focus
         run: |
-          rm -fr ~/Library/Developer/Xcode/DerivedData/* 
-          rm -fr ~/Library/Caches/org.swift.swiftpm/repositories
+          rm -fr ~/Library/Developer/Xcode/DerivedData/Blockzilla-* 
           time xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
-        working-directory: ./focus-ios
-      - name: Size of source and app file (Focus)
+      - name: Size of source and app file
         run: |
-          du -sh focus-ios
+          du -sh .
           du -sh ~/Library/Developer/Xcode/DerivedData/Blockzilla-*/Build/Products/FocusDebug-iphonesimulator/Firefox\ Focus.app
