@@ -24,7 +24,8 @@ on:
         type: string
 
 jobs:
-  Firefox-Focus (${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, ${{ inputs.ios_version }}):
+  Firefox-Focus:
+    name: Firefox & Focus (${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, ${{ inputs.ios_version }})
     runs-on: ${{ inputs.runner }}
     steps:
       - name: Print all input variables
