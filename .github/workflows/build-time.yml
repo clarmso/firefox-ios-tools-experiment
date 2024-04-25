@@ -1,46 +1,57 @@
 name: Firefox iOS build time
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs:
-    firefox-ios-build:
-        runs-on: macos-14
-        steps:
-            - name: Clone firefox-ios repo
-              uses: actions/checkout@v4
-              with:
-                repository: mozilla-mobile/firefox-ios
-            - name: Setup Python
-              uses: actions/setup-python@v5
-              with:
-                  python-version: '3.11'
-            - name: Install Python packages required
-              run: |
-                brew update
-                pip3 install virtualenv pipenv
-            - name: Run setup scripts for Firefox and Focus
-              run: |
-                  sh ./bootstrap.sh --force
-                  sh ./checkout.sh
-            - name: Setup Xcode
-              run: |
-                sudo rm -rf /Applications/Xcode.app
-                sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
-                xcodebuild -version
-            - name: Build Firefox
-              run: |
-                rm -fr ~/Library/Developer/Xcode/DerivedData/* 
-                rm -fr ~/Library/Caches/org.swift.swiftpm/repositories
-                cd firefox-ios
-                xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
-                time xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
-            - name: Build Focus
-              run: |
-                rm -fr ~/Library/Developer/Xcode/DerivedData/* 
-                rm -fr ~/Library/Caches/org.swift.swiftpm/repositories
-                cd focus-ios
-                xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
-                time xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
-  
+  prerequisite:
+    runs-on: macos-14
+    steps:
+      - name: Clone firefox-ios repo
+        uses: actions/checkout@v4
+        with:
+          repository: mozilla-mobile/firefox-ios
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+            python-version: '3.11'
+      - name: Install Python packages required
+        run: |
+          brew update
+          pip3 install virtualenv pipenv
+      - name: Run setup scripts for Firefox and Focus
+        run: |
+          sh ./bootstrap.sh --force
+          sh ./checkout.sh
+      - name: Setup Xcode
+        run: |
+          sudo rm -rf /Applications/Xcode.app
+          sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+          xcodebuild -version
+      - name: Resolve dependencies (Firefox)
+        run: xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
+        working-directory: ./firefox-ios
+      - name: Build Firefox
+        run: |
+          rm -fr ~/Library/Developer/Xcode/DerivedData/* 
+          rm -fr ~/Library/Caches/org.swift.swiftpm/repositories
+          time xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
+        working-directory: ./firefox-ios
+      - name: Size of source and app file (Firefox)
+        run: |
+          du -sh firefox-ios
+          du -sh ~/Library/Developer/Xcode/DerivedData/Client-*/Build/Products/Fennec-iphonesimulator/Client.app
+      - name: Resolve dependencies (Focus)
+        run: xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
+        working-directory: ./focus-ios
+      - name: Build Focus
+        run: |
+          rm -fr ~/Library/Developer/Xcode/DerivedData/* 
+          rm -fr ~/Library/Caches/org.swift.swiftpm/repositories
+          time xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
+        working-directory: ./focus-ios
+      - name: Size of source and app file (Focus)
+        run: |
+          du -sh focus-ios
+          du -sh ~/Library/Developer/Xcode/DerivedData/Client-*/Build/Products/Fennec-iphonesimulator/Client.app  
