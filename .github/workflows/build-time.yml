@@ -26,14 +26,21 @@ jobs:
                   sh ./checkout.sh
             - name: Setup Xcode
               run: |
-                rm -fr ~/Library/Developer/Xcode/DerivedData/* 
-                rm -fr ~/Library/Caches/org.swift.swiftpm/repositories
                 sudo rm -rf /Applications/Xcode.app
                 sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
                 xcodebuild -version
             - name: Build Firefox
               run: |
+                rm -fr ~/Library/Developer/Xcode/DerivedData/* 
+                rm -fr ~/Library/Caches/org.swift.swiftpm/repositories
                 cd firefox-ios
                 xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
                 time xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
-
+            - name: Build Focus
+              run: |
+                rm -fr ~/Library/Developer/Xcode/DerivedData/* 
+                rm -fr ~/Library/Caches/org.swift.swiftpm/repositories
+                cd focus-ios
+                xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
+                time xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
+  
