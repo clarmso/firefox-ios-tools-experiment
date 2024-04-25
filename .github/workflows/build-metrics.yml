@@ -12,6 +12,16 @@ on:
         default: "15.2"
         required: true
         type: string
+      ios_simulator:
+        description: "iPhone/iPad simulator"
+        default: "iPhone 15"
+        required: true
+        type: string
+      ios_version:
+        description: "iOS version"
+        default: "17.2"
+        required: true
+        type: string
 
 jobs:
   Firefox-Focus:
@@ -45,7 +55,7 @@ jobs:
         working-directory: firefox-ios
       - name: Build Firefox
         run: 
-          time xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
+          time xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}'
         working-directory: firefox-ios
       - name: Size of source and app file (Firefox)
         run: |
@@ -58,7 +68,7 @@ jobs:
           xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
         working-directory: focus-ios
       - name: Build Focus
-        run: time xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
+        run: time xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}'
         working-directory: focus-ios
       - name: Size of source and app file (Focus)
         run: |
