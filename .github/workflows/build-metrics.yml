@@ -28,12 +28,14 @@ jobs:
     name: Firefox & Focus (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }})
     runs-on: ${{ inputs.runner }}
     steps:
-      - name: Print all input variables
+      - name: Print all input variables and env info
         run: |
           echo "Github Actions runner: ${{ inputs.runner }}"
           echo "Xcode: ${{ inputs.xcode }}"
           echo "iOS simulator device: ${{ inputs.ios_simulator }}"
           echo "iOS: ${{ inputs.ios_version }}"
+          sw_vers
+          uname -av
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
         with:
