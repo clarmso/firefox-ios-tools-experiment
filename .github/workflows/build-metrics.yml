@@ -46,7 +46,7 @@ jobs:
         run: |
           du -sh .
           du -sh ~/Library/Developer/Xcode/DerivedData/Client-*/Build/Products/Fennec-iphonesimulator/Client.app
-   focus:
+  focus:
     runs-on: macos-14
     needs: prerequisite
     defaults:
