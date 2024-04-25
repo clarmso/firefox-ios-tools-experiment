@@ -1,0 +1,39 @@
+name: Firefox iOS build time
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    firefox-ios-build:
+        runs-on: macos-14
+        steps:
+            - name: Clone firefox-ios repo
+              uses: actions/checkout@v4
+              with:
+                repository: mozilla-mobile/firefox-ios
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+            - name: Install Python packages required
+              run: |
+                brew update
+                pip3 install virtualenv pipenv
+            - name: Run setup scripts for Firefox and Focus
+              run: |
+                  sh ./bootstrap.sh --force
+                  sh ./checkout.sh
+            - name: Setup Xcode
+              run: |
+                rm -fr ~/Library/Developer/Xcode/DerivedData/* 
+                rm -fr ~/Library/Caches/org.swift.swiftpm/repositories
+                sudo rm -rf /Applications/Xcode.app
+                sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+                xcodebuild -version
+            - name: Build Firefox
+              run: |
+                cd firefox-ios
+                xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
+                time xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
+
