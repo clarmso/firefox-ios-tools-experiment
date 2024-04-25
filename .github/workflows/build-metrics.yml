@@ -1,12 +1,21 @@
 name: Firefox & Focus iOS build metrics
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "Github Actions runner"
+        default: "macos-14"
+        required: true
+        type: string
+      xcode:
+        description: "Xcode version"
+        default: "15.2"
+        required: true
+        type: string
 
 jobs:
   Firefox-Focus:
-    runs-on: macos-14
+    runs-on: ${{ inputs.runner }}
     steps:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
@@ -27,7 +36,7 @@ jobs:
       - name: Setup Xcode
         run: |
           sudo rm -rf /Applications/Xcode.app
-          sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+          sudo xcode-select -s /Applications/Xcode_${{ inputs.xcode }}.app/Contents/Developer
           xcodebuild -version
       - name: Resolve dependencies (Firefox)
         run: |
