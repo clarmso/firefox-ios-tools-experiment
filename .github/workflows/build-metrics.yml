@@ -39,20 +39,16 @@ on:
         required: true
         type: boolean
 
-defaults:
-  run:
-    shell: zsh
-
 jobs:
   Dump-env-info:
     name: Dump environment info
     runs-on: ${{ inputs.runner }}
     steps:
       - run: |
-          echo "Runner: \t ${{ inputs.runner }}"
-          echo "Xcode: \t ${{ inputs.xcode }}"
-          echo "Device: \t ${{ inputs.ios_simulator }}"
-          echo "iOS: \t ${{ inputs.ios_version }}"
+          echo "Runner: ${{ inputs.runner }}"
+          echo "Xcode:  ${{ inputs.xcode }}"
+          echo "Device: ${{ inputs.ios_simulator }}"
+          echo "iOS:    ${{ inputs.ios_version }}"
           sw_vers
           uname -av
   Firefox:
