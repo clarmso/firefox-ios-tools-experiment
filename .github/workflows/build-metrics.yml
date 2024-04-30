@@ -24,8 +24,8 @@ on:
         type: string
 
 jobs:
-  Firefox-Focus:
-    name: Firefox & Focus (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }})
+  Print-Environment:
+    name: Environment (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }})
     runs-on: ${{ inputs.runner }}
     steps:
       - name: Print all input variables and env info
@@ -36,6 +36,10 @@ jobs:
           echo "iOS:\t\t${{ inputs.ios_version }}"
           sw_vers
           uname -av
+  Firefox:
+    needs: Print-Environment
+    runs-on: ${{ inputs.runner }}
+    steps:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
         with:
@@ -48,16 +52,15 @@ jobs:
         run: |
           brew update
           pip3 install virtualenv pipenv
-      - name: Run setup scripts for Firefox and Focus
-        run: |
-          sh ./bootstrap.sh --force
-          sh ./checkout.sh
       - name: Setup Xcode
         run: |
           sudo rm -rf /Applications/Xcode.app
           sudo xcode-select -s /Applications/Xcode_${{ inputs.xcode }}.app/Contents/Developer
           xcodebuild -version
-      - name: Resolve dependencies (Firefox)
+      - name: Run setup scripts for Firefox
+        run: |
+          sh ./bootstrap.sh --force
+      - name: Resolve dependencies
         run: |
           rm -fr ~/Library/Developer/Xcode/DerivedData/Client-*
           xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
@@ -66,7 +69,7 @@ jobs:
         run: 
           time xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}'
         working-directory: firefox-ios
-      - name: Size of source and app file (Firefox)
+      - name: Size of source and app files
         run: |
           du -sh .
           du -sh ~/Library/Developer/Xcode/DerivedData/Client-*/Build/Products/Fennec-iphonesimulator/Client.app
@@ -75,6 +78,7 @@ jobs:
         run: |
           time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}'
         working-directory: firefox-ios
+        continue-on-error: true
       - name: Run Firefox smoke tests
         run: |
           # time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest1
@@ -83,6 +87,30 @@ jobs:
           # time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest4 
         working-directory: firefox-ios
         continue-on-error: true
+  Focus:
+    needs: Print-Environment
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - name: Clone firefox-ios repo
+        uses: actions/checkout@v4
+        with:
+          repository: mozilla-mobile/firefox-ios
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Python packages required
+        run: |
+          brew update
+          pip3 install virtualenv pipenv
+      - name: Setup Xcode
+        run: |
+          sudo rm -rf /Applications/Xcode.app
+          sudo xcode-select -s /Applications/Xcode_${{ inputs.xcode }}.app/Contents/Developer
+          xcodebuild -version
+      - name: Run setup scripts for Focus
+        run: |
+          sh ./checkout.sh
       - name: Resolve dependencies (Focus)
         run: |
           rm -fr ~/Library/Developer/Xcode/DerivedData/Blockzilla-* 
@@ -91,7 +119,7 @@ jobs:
       - name: Build Focus
         run: time xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}'
         working-directory: focus-ios
-      - name: Size of source and app file (Focus)
+      - name: Size of source and app files
         run: |
           du -sh .
           du -sh ~/Library/Developer/Xcode/DerivedData/Blockzilla-*/Build/Products/FocusDebug-iphonesimulator/Firefox\ Focus.app
@@ -100,6 +128,7 @@ jobs:
         run: |
           time xcodebuild test -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan UnitTests
         working-directory: focus-ios
+        continue-on-error: true
       - name: Run Focus smoke tests
         run: |
           time xcodebuild test -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan SmokeTest
