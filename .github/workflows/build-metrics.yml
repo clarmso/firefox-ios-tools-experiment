@@ -9,7 +9,7 @@ on:
         type: string
       xcode:
         description: "Xcode version"
-        default: "15.2"
+        default: "15.3"
         required: true
         type: string
       ios_simulator:
@@ -19,7 +19,7 @@ on:
         type: string
       ios_version:
         description: "iOS version"
-        default: "17.2"
+        default: "17.4"
         required: true
         type: string
 
