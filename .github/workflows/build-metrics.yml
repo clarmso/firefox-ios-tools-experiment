@@ -71,6 +71,17 @@ jobs:
           du -sh .
           du -sh ~/Library/Developer/Xcode/DerivedData/Client-*/Build/Products/Fennec-iphonesimulator/Client.app
         working-directory: firefox-ios
+      - name: Run Firefox unit tests
+        run: |
+          time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}'
+        working-directory: firefox-ios
+      - name: Run Firefox smoke tests
+        run: |
+          time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest1
+          time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest2
+          time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest3
+          time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest4 
+        working-directory: firefox-ios
       - name: Resolve dependencies (Focus)
         run: |
           rm -fr ~/Library/Developer/Xcode/DerivedData/Blockzilla-* 
@@ -83,4 +94,12 @@ jobs:
         run: |
           du -sh .
           du -sh ~/Library/Developer/Xcode/DerivedData/Blockzilla-*/Build/Products/FocusDebug-iphonesimulator/Firefox\ Focus.app
+        working-directory: focus-ios
+      - name: Run Focus unit tests
+        run: |
+          time xcodebuild test -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan UnitTests
+        working-directory: focus-ios
+      - name: Run Focus smoke tests
+        run: |
+          time xcodebuild test -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan SmokeTest
         working-directory: focus-ios
