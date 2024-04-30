@@ -30,10 +30,10 @@ jobs:
     steps:
       - name: Print all input variables and env info
         run: |
-          echo "Github Actions runner: ${{ inputs.runner }}"
-          echo "Xcode: ${{ inputs.xcode }}"
-          echo "iOS simulator device: ${{ inputs.ios_simulator }}"
-          echo "iOS: ${{ inputs.ios_version }}"
+          echo "Runner:\t\t${{ inputs.runner }}"
+          echo "Xcode:\t\t${{ inputs.xcode }}"
+          echo "Device:\t\t${{ inputs.ios_simulator }}"
+          echo "iOS:\t\t${{ inputs.ios_version }}"
           sw_vers
           uname -av
       - name: Clone firefox-ios repo
