@@ -146,7 +146,7 @@ jobs:
       - name: Run unit tests
         run: |
           parallel_enabled=$([ ${{ inputs.parallel_focus_tests }} ] && echo "YES" || echo "NO")
-          time xcodebuild test-without-building-parallel-testing-enabled $parallel_enabled -parallel-testing-worker-count 3 -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan UnitTests
+          time xcodebuild test-without-building -parallel-testing-enabled $parallel_enabled -parallel-testing-worker-count 3 -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan UnitTests
         working-directory: focus-ios
         continue-on-error: true
       - name: Run smoke tests
