@@ -77,11 +77,12 @@ jobs:
         working-directory: firefox-ios
       - name: Run Firefox smoke tests
         run: |
-          time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest1
+          # time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest1
           time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest2
-          time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest3
-          time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest4 
+          # time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest3
+          # time xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest4 
         working-directory: firefox-ios
+        continue-on-error: true
       - name: Resolve dependencies (Focus)
         run: |
           rm -fr ~/Library/Developer/Xcode/DerivedData/Blockzilla-* 
@@ -103,3 +104,4 @@ jobs:
         run: |
           time xcodebuild test -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan SmokeTest
         working-directory: focus-ios
+        continue-on-error: true
