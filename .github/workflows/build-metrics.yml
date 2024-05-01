@@ -22,14 +22,6 @@ on:
         default: "17.4"
         required: true
         type: string
-      parallel_firefox_tests:
-        default: false
-        required: true
-        type: boolean
-      parallel_focus_tests:
-        default: false
-        required: true
-        type: boolean
       run_firefox:
         default: true
         required: true
@@ -145,13 +137,11 @@ jobs:
         working-directory: focus-ios
       - name: Run unit tests
         run: |
-          parallel_enabled=$([ ${{ inputs.parallel_focus_tests }} ] && echo "YES" || echo "NO")
-          time xcodebuild test-without-building -parallel-testing-enabled $parallel_enabled -parallel-testing-worker-count 2 -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan UnitTests
+          time xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan UnitTests
         working-directory: focus-ios
         continue-on-error: true
       - name: Run smoke tests
         run: |
-          parallel_enabled=$([ ${{ inputs.parallel_focus_tests }} ] && echo "YES" || echo "NO")
-          time xcodebuild test-without-building -parallel-testing-enabled $parallel_enabled -parallel-testing-worker-count 2 -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan SmokeTest
+          time xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan SmokeTest
         working-directory: focus-ios
         continue-on-error: true
