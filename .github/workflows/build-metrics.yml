@@ -1,4 +1,4 @@
-name: Firefox & Focus iOS build metrics
+name: Firefox & Focus iOS build & test
 on:
   workflow_dispatch:
     inputs:
