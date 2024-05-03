@@ -46,10 +46,11 @@ jobs:
           echo "Xcode:  ${{ inputs.xcode }}"
           echo "Device: ${{ inputs.ios_simulator }}"
           echo "iOS:    ${{ inputs.ios_version }}"
+          echo "Branch: ${{ inputs.branch }}"
           sw_vers
           uname -av
   Firefox:
-    name: Firefox (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }})
+    name: Firefox (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
     if: ${{ inputs.run_firefox }}
     needs: Dump-env-info
     runs-on: ${{ inputs.runner }}
@@ -103,7 +104,7 @@ jobs:
         working-directory: firefox-ios
         continue-on-error: true
   Focus:
-    name: Focus (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }})
+    name: Focus (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
     if: ${{ inputs.run_focus }}
     needs: Dump-env-info
     runs-on: ${{ inputs.runner }}
