@@ -55,9 +55,12 @@ jobs:
           xcodebuild -version
           xcrun simctl list
           xcrun simctl create "iPhone 13 Pro" "iPhone 13 Pro" com.apple.CoreSimulator.SimRuntime.iOS-16-4
+          xcrun simctl list
+          xcrun simctl boot "iPhone 13 Pro"
+          xcrun simctl openurl "iPhone 13 Pro" https://www.google.com
   Firefox:
     name: Firefox (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
-    if: ${{ inputs.run_firefox }}
+    if: false
     needs: Dump-env-info
     runs-on: ${{ inputs.runner }}
     steps:
@@ -111,7 +114,7 @@ jobs:
         continue-on-error: true
   Focus:
     name: Focus (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
-    if: ${{ inputs.run_focus }}
+    if: false
     needs: Dump-env-info
     runs-on: ${{ inputs.runner }}
     steps:
