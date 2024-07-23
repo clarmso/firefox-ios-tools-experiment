@@ -49,6 +49,12 @@ jobs:
           echo "Branch: ${{ inputs.branch }}"
           sw_vers
           uname -av
+      - run: |
+          sudo rm -rf /Applications/Xcode.app
+          sudo xcode-select -s /Applications/Xcode_${{ inputs.xcode }}.app/Contents/Developer
+          xcodebuild -version
+          xcrun simctl list
+          xcrun simctl create "iPhone 13 Pro" "iPhone 13 Pro" com.apple.CoreSimulator.SimRuntime.iOS-16-4
   Firefox:
     name: Firefox (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
     if: ${{ inputs.run_firefox }}
