@@ -51,7 +51,7 @@ jobs:
           uname -av
       - run: |
           sudo rm -rf /Applications/Xcode.app
-          sudo xcode-select -s /Applications/Xcode_${{ inputs.xcode }}.app/Contents/Developer
+          sudo xcode-select -s /Applications/Xcode_14.3.1.app/Contents/Developer
           xcodebuild -version
           xcrun simctl list
           xcrun simctl create "iPhone 13 Pro" "iPhone 13 Pro" com.apple.CoreSimulator.SimRuntime.iOS-16-4
