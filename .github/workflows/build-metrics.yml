@@ -54,10 +54,8 @@ jobs:
           sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
           xcodebuild -version
 
-          brew install blacktop/tap/ipsw
-          echo "iOS 15.5 Simulator" | ipsw download xcode --sim
-          dmg_file=$(ls *.dmg)
-          sh install_runtime.sh "${dmg_file}" 
+          brew install xcodesorg/made/xcodes || mint install XcodesOrg/xcodes
+          sudo xcodes runtimes install "iOS 15.5"
 
           xcrun simctl list
           xcrun simctl create "iPhone 13 Pro" "iPhone 13 Pro" com.apple.CoreSimulator.SimRuntime.iOS-15-5
