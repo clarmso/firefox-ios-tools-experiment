@@ -57,7 +57,12 @@ jobs:
           xcrun simctl create "iPhone 13 Pro" "iPhone 13 Pro" com.apple.CoreSimulator.SimRuntime.iOS-16-4
           xcrun simctl list
           xcrun simctl boot "iPhone 13 Pro"
+          echo "iPhone 13 booted"
           xcrun simctl openurl "iPhone 13 Pro" https://www.google.com
+          echo "Opened URL using iPhone 13"
+          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+          xcodebuild -version
+          xcrun simctl list
   Firefox:
     name: Firefox (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
     if: false
