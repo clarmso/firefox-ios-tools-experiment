@@ -51,18 +51,21 @@ jobs:
           uname -av
       - run: |
           sudo rm -rf /Applications/Xcode.app
-          sudo xcode-select -s /Applications/Xcode_14.3.1.app/Contents/Developer
+          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
           xcodebuild -version
+
+          brew install blacktop/tap/ipsw
+          echo "iOS 15.5 Simulator" | ipsw download xcode --sim
+          dmg_file=$(ls *.dmg)
+          sh install_runtime.sh "${dmg_file}" 
+
           xcrun simctl list
-          xcrun simctl create "iPhone 13 Pro" "iPhone 13 Pro" com.apple.CoreSimulator.SimRuntime.iOS-16-4
+          xcrun simctl create "iPhone 13 Pro" "iPhone 13 Pro" com.apple.CoreSimulator.SimRuntime.iOS-15-5
           xcrun simctl list
           xcrun simctl boot "iPhone 13 Pro"
           echo "iPhone 13 booted"
           xcrun simctl openurl "iPhone 13 Pro" https://www.google.com
           echo "Opened URL using iPhone 13"
-          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
-          xcodebuild -version
-          xcrun simctl list
   Firefox:
     name: Firefox (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
     if: false
