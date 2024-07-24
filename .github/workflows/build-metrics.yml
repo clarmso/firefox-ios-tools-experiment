@@ -49,20 +49,6 @@ jobs:
           echo "Branch: ${{ inputs.branch }}"
           sw_vers
           uname -av
-      - run: |
-          sudo rm -rf /Applications/Xcode.app
-          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
-          xcodebuild -version
-
-          sudo xcodes runtimes install "iOS 15.5"
-
-          xcrun simctl list
-          xcrun simctl create "iPhone 13 Pro" "iPhone 13 Pro" com.apple.CoreSimulator.SimRuntime.iOS-15-5
-          xcrun simctl list
-          xcrun simctl boot "iPhone 13 Pro"
-          echo "iPhone 13 booted"
-          xcrun simctl openurl "iPhone 13 Pro" https://www.google.com
-          echo "Opened URL using iPhone 13"
   Firefox:
     name: Firefox (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
     if: false
@@ -144,6 +130,12 @@ jobs:
       - name: Run setup scripts for Focus
         run: |
           sh ./checkout.sh
+      - name: Create iOS 15 simulator
+        run: |
+          sudo xcodes runtimes install "iOS 16.4"
+          sudo xcodes runtimes install "iOS 15.5"
+          xcrun simctl create "${{ inputs.ios_simulator }}" "${{ inputs.ios_simulator }}" com.apple.CoreSimulator.SimRuntime.iOS-16-4
+          xcrun simctl create "${{ inputs.ios_simulator }}" "${{ inputs.ios_simulator }}" com.apple.CoreSimulator.SimRuntime.iOS-15-5
       - name: Resolve dependencies
         run: |
           rm -fr ~/Library/Developer/Xcode/DerivedData/Blockzilla-* 
