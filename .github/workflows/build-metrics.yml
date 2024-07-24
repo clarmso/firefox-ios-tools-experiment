@@ -131,9 +131,7 @@ jobs:
           sh ./checkout.sh
       - name: Create iOS 16 simulator
         run: |
-          gem install xcode-install
-          xcversion simulators --install='iOS 16.4'
-          xcrun simctl create "iPhone 14" "iPhone 14" com.apple.CoreSimulator.SimRuntime.iOS-16-4
+          xcodes install 16.4
       - name: Resolve dependencies
         run: |
           xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
