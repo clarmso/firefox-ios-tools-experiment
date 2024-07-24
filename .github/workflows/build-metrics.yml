@@ -9,7 +9,7 @@ on:
         type: string
       xcode:
         description: "Xcode version"
-        default: "15.3"
+        default: "15.4"
         required: true
         type: string
       ios_simulator:
@@ -131,7 +131,7 @@ jobs:
           sh ./checkout.sh
       - name: Create iOS 16 simulator
         run: |
-          xcodes install 16.4
+          xcodes runtimes install 16.4
       - name: Resolve dependencies
         run: |
           xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
