@@ -138,20 +138,14 @@ jobs:
           xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
         working-directory: focus-ios
       - name: Build Focus
-        run: xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}'
-        working-directory: focus-ios
-      - name: Size of source and app files
-        run: |
-          du -sh .
-          du -sh ~/Library/Developer/Xcode/DerivedData/Blockzilla-*/Build/Products/FocusDebug-iphonesimulator/Firefox\ Focus.app
-        working-directory: focus-ios
+        run: xcodebuild build-for-testing -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO ARCH="arm64"
       - name: Run unit tests
         run: |
-          xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan UnitTests
+          xcodebuild test-without-building -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan UnitTests
         working-directory: focus-ios
         continue-on-error: true
       - name: Run smoke tests
         run: |
-          xcodebuild test-without-building -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan SmokeTest
+          xcodebuild test-without-building -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan SmokeTest
         working-directory: focus-ios
         continue-on-error: true
