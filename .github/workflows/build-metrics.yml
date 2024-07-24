@@ -131,7 +131,7 @@ jobs:
           sh ./checkout.sh
       - name: Create iOS 16 simulator
         run: |
-          xcodes runtimes install 16.4
+          sudo xcodes runtimes install 16.4
       - name: Resolve dependencies
         run: |
           xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
