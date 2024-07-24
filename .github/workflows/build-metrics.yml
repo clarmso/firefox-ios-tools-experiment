@@ -131,7 +131,10 @@ jobs:
           sh ./checkout.sh
       - name: Create iOS 16 simulator
         run: |
-          sudo xcodes runtimes install 16.4
+          brew install blacktop/tap/ipsw
+          echo "iOS 16.4 Simulator" | ipsw download xcode --sim
+          dmg_file=$(ls *.dmg)
+          sh install_runtime.sh "${dmg_file}"
       - name: Resolve dependencies
         run: |
           xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
