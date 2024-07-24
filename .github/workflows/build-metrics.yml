@@ -129,12 +129,10 @@ jobs:
       - name: Run setup scripts for Focus
         run: |
           sh ./checkout.sh
-      - name: Create iOS 15 simulator
+      - name: Create iOS 16 simulator
         run: |
-          sudo xcodes runtimes install "iOS 16.4"
-          sudo xcodes runtimes install "iOS 15.5"
+          sudo xcodes runtimes install "iOS ${{ inputs.ios_version }}"
           xcrun simctl create "${{ inputs.ios_simulator }}" "${{ inputs.ios_simulator }}" com.apple.CoreSimulator.SimRuntime.iOS-16-4
-          xcrun simctl create "${{ inputs.ios_simulator }}" "${{ inputs.ios_simulator }}" com.apple.CoreSimulator.SimRuntime.iOS-15-5
       - name: Resolve dependencies
         run: |
           rm -fr ~/Library/Developer/Xcode/DerivedData/Blockzilla-* 
