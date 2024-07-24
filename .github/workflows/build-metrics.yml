@@ -105,7 +105,6 @@ jobs:
         continue-on-error: true
   Focus:
     name: Focus (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
-    if: false
     needs: Dump-env-info
     runs-on: ${{ inputs.runner }}
     steps:
