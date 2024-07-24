@@ -134,11 +134,11 @@ jobs:
           sudo xcodes runtimes install "iOS ${{ inputs.ios_version }}"
       - name: Resolve dependencies
         run: |
-          rm -fr ~/Library/Developer/Xcode/DerivedData/Blockzilla-* 
           xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
         working-directory: focus-ios
       - name: Build Focus
         run: xcodebuild build-for-testing -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO ARCH="arm64"
+        working-directory: focus-ios
       - name: Run unit tests
         run: |
           xcodebuild test-without-building -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan UnitTests
