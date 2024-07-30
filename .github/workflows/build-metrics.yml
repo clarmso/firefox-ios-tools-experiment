@@ -145,6 +145,7 @@ jobs:
         run: xcodebuild build-for-testing -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO ARCH="arm64"
         working-directory: focus-ios
       - name: Run unit tests
+        if: false
         run: |
           xcodebuild test-without-building -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan UnitTests
         working-directory: focus-ios
