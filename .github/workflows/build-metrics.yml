@@ -137,7 +137,6 @@ jobs:
           curl https://gist.githubusercontent.com/testableapple/3688bbf7c0e475aa915bd34b7cf7876e/raw/db91bbbc5ace3835de34db5030c6b04e519847e5/install_runtime.sh > install_runtime.sh
           chmod u+x install_runtime.sh
           sh install_runtime.sh "${dmg_file}"
-          xcrun simctl create "${{ inputs.ios_simulator }}" "${{ inputs.ios_simulator }}" com.apple.CoreSimulator.SimRuntime.iOS-16-4
       - name: Resolve dependencies
         run: |
           xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
