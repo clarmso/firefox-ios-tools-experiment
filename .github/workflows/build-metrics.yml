@@ -1,68 +1,41 @@
-name: Firefox & Focus iOS build & test
+name: Focus iOS 16 tests
 on:
   workflow_dispatch:
-    inputs:
-      runner:
-        description: "Github Actions runner"
-        default: "macos-14"
-        required: true
-        type: string
-      xcode:
-        description: "Xcode version"
-        default: "15.4"
-        required: true
-        type: string
-      ios_simulator:
-        description: "iPhone/iPad simulator"
-        default: "iPhone 15"
-        required: true
-        type: string
-      ios_version:
-        description: "iOS version"
-        default: "17.4"
-        required: true
-        type: string
-      branch:
-        description: "Branch"
-        default: "main"
-        required: true
-        type: string
-      run_firefox:
-        default: true
-        required: true
-        type: boolean
-      run_focus:
-        default: true
-        required: true
-        type: boolean
+
+env:
+    browser: focus-ios
+    xcode_version: 15.4
+    ios_simulator_default: iPhone 14
+    xcodebuild_scheme: Focus
+    xcodebuild_target: XCUITest
+    test_results_directory: /Users/runner/tmp
 
 jobs:
   Focus:
     name: Focus
-    runs-on: ${{ inputs.runner }}
+    runs-on: macos-14
     steps:
-      - name: Clone firefox-ios repo
-        uses: actions/checkout@v4
-        with:
-          repository: mozilla-mobile/firefox-ios
-          ref: ${{ inputs.branch }}
+      - name: Check out source code
+        uses: actions/checkout@v4.1.7
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install Python packages required
+      - name: Install packages
         run: |
           brew update
+          brew install blacktop/tap/ipsw
           pip3 install virtualenv pipenv
       - name: Setup Xcode
+        id: xcode
         run: |
           sudo rm -rf /Applications/Xcode.app
-          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+          sudo xcode-select -s /Applications/Xcode_${{ env.xcode_version }}.app/Contents/Developer
           xcodebuild -version
-      - name: Run setup scripts for Focus
-        run: |
-          sh ./checkout.sh
+          ./checkout.sh
+          ./bootstrap.sh --force
       - name: Create iOS 16 simulator
+        id: setup-simulator
         run: |
           brew install blacktop/tap/ipsw
           echo "iOS 16.4 Simulator" | ipsw download xcode --sim
@@ -71,14 +44,23 @@ jobs:
           chmod u+x install_runtime.sh
           sh install_runtime.sh "${dmg_file}"
           xcrun simctl list runtimes
-          xcrun simctl create "iPhone 14" "iPhone 14" com.apple.CoreSimulator.SimRuntime.iOS-16-4
       - name: Build Focus
+        id: compile
         run: |
           xcodebuild build-for-testing \
             -project Blockzilla.xcodeproj -scheme Focus \
             -testPlan SmokeTest -configuration FocusDebug\
             CODE_SIGNING_ALLOWED=NO -destination \
             'platform=iOS Simulator,name=iPhone 14 Pro Max,OS=16.4'
+        working-directory: focus-ios
+      - name: Run unit tests
+        run: |
+          xcodebuild test-without-building \
+            -scheme Focus \
+            -project Blockzilla.xcodeproj -configuration FocusDebug \
+            CODE_SIGNING_ALLOWED=NO \
+            -destination 'platform=iOS Simulator,name=iPhone 14 Pro Max,OS=16.4' \
+            -testPlan UnitTests
         working-directory: focus-ios
       - name: Run smoke tests
         run: |
@@ -88,4 +70,13 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -destination 'platform=iOS Simulator,name=iPhone 14 Pro Max,OS=16.4' \
             -testPlan SmokeTest
+        working-directory: focus-ios
+      - name: Run full functional tests
+        run: |
+          xcodebuild test-without-building \
+            -scheme Focus \
+            -project Blockzilla.xcodeproj -configuration FocusDebug \
+            CODE_SIGNING_ALLOWED=NO \
+            -destination 'platform=iOS Simulator,name=iPhone 14 Pro Max,OS=16.4' \
+            -testPlan FullFunctionalTests
         working-directory: focus-ios
