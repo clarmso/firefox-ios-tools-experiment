@@ -138,7 +138,7 @@ jobs:
           chmod u+x install_runtime.sh
           sh install_runtime.sh "${dmg_file}"
           xcrun simctl list runtimes
-          xcrun simctl create "iPhone 14" "iPhone 14" com.apple.CoreSimulator.SimRuntime.iOS-16.4
+          xcrun simctl create "iPhone 14" "iPhone 14" com.apple.CoreSimulator.SimRuntime.iOS-16-4
       - name: Resolve dependencies
         run: |
           xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
