@@ -37,75 +37,8 @@ on:
         type: boolean
 
 jobs:
-  Dump-env-info:
-    name: Dump environment info
-    runs-on: ${{ inputs.runner }}
-    steps:
-      - run: |
-          echo "Runner: ${{ inputs.runner }}"
-          echo "Xcode:  ${{ inputs.xcode }}"
-          echo "Device: ${{ inputs.ios_simulator }}"
-          echo "iOS:    ${{ inputs.ios_version }}"
-          echo "Branch: ${{ inputs.branch }}"
-          sw_vers
-          uname -av
-  Firefox:
-    name: Firefox (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
-    if: false
-    needs: Dump-env-info
-    runs-on: ${{ inputs.runner }}
-    steps:
-      - name: Clone firefox-ios repo
-        uses: actions/checkout@v4
-        with:
-          repository: mozilla-mobile/firefox-ios
-          ref: ${{ inputs.branch }}
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-            python-version: '3.11'
-      - name: Install Python packages required
-        run: |
-          brew update
-          pip3 install virtualenv pipenv
-      - name: Setup Xcode
-        run: |
-          sudo rm -rf /Applications/Xcode.app
-          sudo xcode-select -s /Applications/Xcode_${{ inputs.xcode }}.app/Contents/Developer
-          xcodebuild -version
-      - name: Run setup scripts for Firefox
-        run: |
-          sh ./bootstrap.sh --force
-      - name: Resolve dependencies
-        run: |
-          rm -fr ~/Library/Developer/Xcode/DerivedData/Client-*
-          xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
-        working-directory: firefox-ios
-      - name: Build Firefox
-        run: 
-          time xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}'
-        working-directory: firefox-ios
-      - name: Size of source and app files
-        run: |
-          du -sh .
-          du -sh ~/Library/Developer/Xcode/DerivedData/Client-*/Build/Products/Fennec-iphonesimulator/Client.app
-        working-directory: firefox-ios
-      - name: Run unit tests
-        run: |
-          xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}'
-        working-directory: firefox-ios
-        continue-on-error: true
-      - name: Run smoke tests
-        run: |
-          xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest1
-          xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest2
-          xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest3
-          xcodebuild test-without-building -target Client -scheme Fennec -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan Smoketest4 
-        working-directory: firefox-ios
-        continue-on-error: true
   Focus:
-    name: Focus (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
-    needs: Dump-env-info
+    name: Focus
     runs-on: ${{ inputs.runner }}
     steps:
       - name: Clone firefox-ios repo
@@ -140,13 +73,14 @@ jobs:
           xcrun simctl list runtimes
           xcrun simctl create "iPhone 14" "iPhone 14" com.apple.CoreSimulator.SimRuntime.iOS-16-4
       - name: Build Focus
-        run: xcodebuild build-for-testing -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO ARCH="arm64"
+        run: |
+          xcodebuild build-for-testing -scheme Focus -project Blockzilla.xcodeproj -testPlan SmokeTest -configuration FocusDebug CODE_SIGNING_ALLOWED=NO -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4'
         working-directory: focus-ios
       - name: Run unit tests
         run: |
-          xcodebuild test-without-building -derivedDataPath ~/DerivedData -scheme Focus -project Blockzilla.xcodeproj -configuration FocusDebug ARCHS="arm64" COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' -testPlan UnitTests
+          xcodebuild test-without-building -scheme Focus -project Blockzilla.xcodeproj -configuration FocusDebug CODE_SIGNING_ALLOWED=NO -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' -testPlan UnitTests
         working-directory: focus-ios
       - name: Run smoke tests
         run: |
-          xcodebuild test-without-building -derivedDataPath ~/DerivedData -scheme Focus -project Blockzilla.xcodeproj -configuration FocusDebug ARCHS="arm64" COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' -testPlan SmokeTest
+          xcodebuild test-without-building -scheme Focus -project Blockzilla.xcodeproj -configuration FocusDebug CODE_SIGNING_ALLOWED=NO -destination 'platform=iOS Simulator,name=iPhone 14 Max,OS=16.4' -testPlan SmokeTest
         working-directory: focus-ios
