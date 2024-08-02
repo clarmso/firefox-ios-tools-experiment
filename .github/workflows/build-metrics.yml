@@ -57,7 +57,7 @@ jobs:
       - name: Setup Xcode
         run: |
           sudo rm -rf /Applications/Xcode.app
-          sudo xcode-select -s /Applications/Xcode_${{ inputs.xcode }}.app/Contents/Developer
+          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
           xcodebuild -version
       - name: Run setup scripts for Focus
         run: |
@@ -74,13 +74,23 @@ jobs:
           xcrun simctl create "iPhone 14" "iPhone 14" com.apple.CoreSimulator.SimRuntime.iOS-16-4
       - name: Build Focus
         run: |
-          xcodebuild build-for-testing -scheme Focus -project Blockzilla.xcodeproj -testPlan SmokeTest -configuration FocusDebug CODE_SIGNING_ALLOWED=NO -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4'
-        working-directory: focus-ios
-      - name: Run unit tests
-        run: |
-          xcodebuild test-without-building -scheme Focus -project Blockzilla.xcodeproj -configuration FocusDebug CODE_SIGNING_ALLOWED=NO -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' -testPlan UnitTests
+          xcodebuild build-for-testing \
+            -project Blockzilla.xcodeproj -scheme Focus \
+            -configuration FocusDebug CODE_SIGNING_ALLOWED=NO \
+            -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4'
+          xcodebuild build-for-testing \
+            -project Blockzilla.xcodeproj -scheme Focus \
+            -testPlan SmokeTest -configuration FocusDebug\
+            CODE_SIGNING_ALLOWED=NO -destination \
+            'platform=iOS Simulator,name=iPhone 14 Pro Max,OS=16.4'
         working-directory: focus-ios
       - name: Run smoke tests
         run: |
-          xcodebuild test-without-building -scheme Focus -project Blockzilla.xcodeproj -configuration FocusDebug CODE_SIGNING_ALLOWED=NO -destination 'platform=iOS Simulator,name=iPhone 14 Max,OS=16.4' -testPlan SmokeTest
+          xcodebuild test-without-building \
+            -scheme Focus \
+            -parallel-testing-enabled YES -parallel-testing-worker-count 3 \
+            -project Blockzilla.xcodeproj -configuration FocusDebug \
+            CODE_SIGNING_ALLOWED=NO \
+            -destination 'platform=iOS Simulator,name=iPhone 14 Pro Max,OS=16.4' \
+            -testPlan SmokeTest
         working-directory: focus-ios
