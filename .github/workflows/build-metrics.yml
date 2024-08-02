@@ -137,19 +137,20 @@ jobs:
           curl https://gist.githubusercontent.com/testableapple/3688bbf7c0e475aa915bd34b7cf7876e/raw/db91bbbc5ace3835de34db5030c6b04e519847e5/install_runtime.sh > install_runtime.sh
           chmod u+x install_runtime.sh
           sh install_runtime.sh "${dmg_file}"
+          xcrun simctl create "iPhone 14" "iPhone 14" com.apple.CoreSimulator.SimRuntime.iOS-16.4
       - name: Resolve dependencies
         run: |
           xcodebuild -resolvePackageDependencies -onlyUsePackageVersionsFromResolvedFile
         working-directory: focus-ios
       - name: Build Focus
-        run: xcodebuild build-for-testing -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO ARCH="arm64"
+        run: xcodebuild build-for-testing -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO ARCH="arm64"
         working-directory: focus-ios
       - name: Run unit tests
         if: false
         run: |
-          xcodebuild test-without-building -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan UnitTests
+          xcodebuild test-without-building -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' -testPlan UnitTests
         working-directory: focus-ios
       - name: Run smoke tests
         run: |
-          xcodebuild test-without-building -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' -testPlan SmokeTest
+          xcodebuild test-without-building -derivedDataPath ~/DerivedData -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.4' -testPlan SmokeTest
         working-directory: focus-ios
