@@ -57,15 +57,15 @@ jobs:
           xcodebuild build-for-testing \
             -project Blockzilla.xcodeproj -scheme Focus \
             -configuration FocusDebug \
-            CODE_SIGNING_ALLOWED=NO -destination \
-            'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}'
+            CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
+            -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}'
         working-directory: focus-ios
       - name: Run unit tests
         run: |
           xcodebuild test-without-building \
             -project Blockzilla.xcodeproj -scheme Focus \
             -configuration FocusDebug \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan UnitTests
         working-directory: ${{ env.browser }}
@@ -75,7 +75,7 @@ jobs:
           xcodebuild test-without-building \
             -project Blockzilla.xcodeproj -scheme Focus \
             -configuration FocusDebug \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan SmokeTest
         working-directory: ${{ env.browser }}
@@ -85,7 +85,7 @@ jobs:
           xcodebuild test-without-building \
             -project Blockzilla.xcodeproj -scheme Focus \
             -configuration FocusDebug \
-            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan FullFunctionalTests
         working-directory: ${{ env.browser }}
