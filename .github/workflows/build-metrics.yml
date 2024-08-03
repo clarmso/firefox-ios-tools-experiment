@@ -63,17 +63,41 @@ jobs:
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}'
         working-directory: focus-ios
       - name: Run unit tests
+        id: run-unit-tests
         run: |
           xcodebuild test-without-building \
             -project Blockzilla.xcodeproj -scheme Focus \
             -configuration FocusDebug \
             CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
-            -testPlan UnitTests
-            -resultBundlePath ${{ env.test_results_directory }}/UnitTests
-            | tee xcodebuild.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
+            -testPlan UnitTests \
+            -resultBundlePath ${{ env.test_results_directory }}/UnitTests \
+            | tee xcodebuild-unittests.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
         working-directory: ${{ env.browser }}
         continue-on-error: true
+      - name: Print test report (UnitTests)
+        id: test-report-unittests
+        run: |
+          mv ./build/reports/junit.xml ./junit-unittests.xml
+          python ../test-fixtures/ci/convert_junit_to_markdown.py --github --${{ env.browser }} ./junit-unittests.xml ./github-unittests.md
+          cat github.md >> $GITHUB_STEP_SUMMARY
+          python ../test-fixtures/ci/convert_junit_to_markdown.py --slack --${{ env.browser }} ./junit-unittests.xml ./slack-unittests.json
+      - name: Report to Slack
+        id: slack
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload-file-path: ${{ env.browser }}/slack-unittests.json
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+          ios_simulator: ${{ env.ios_simulator }}
+          pass_fail:  ${{ steps.run-unit-tests.outcome == 'success' && ':white_check_mark:' || ':x:' }}
+          xcodebuild_test_plan: 'UnitTests'
+          ref_name: ${{ github.ref_name }}
+          repository: ${{ github.repository }}
+          run_id: ${{ github.run_id }}
+          server_url: ${{ github.server_url }}
+          sha: ${{ github.sha }}     
       - name: Run smoke tests
         run: |
           xcodebuild test-without-building \
@@ -81,9 +105,9 @@ jobs:
             -configuration FocusDebug \
             CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
-            -testPlan SmokeTest
-            -resultBundlePath ${{ env.test_results_directory }}/SmokeTest
-            | tee xcodebuild.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
+            -testPlan SmokeTest \
+            -resultBundlePath ${{ env.test_results_directory }}/SmokeTest \
+            | tee xcodebuild-smoketests.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
         working-directory: ${{ env.browser }}
         continue-on-error: true
       - name: Run full functional tests
@@ -93,8 +117,8 @@ jobs:
             -configuration FocusDebug \
             CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
-            -testPlan FullFunctionalTests
-            -resultBundlePath ${{ env.test_results_directory }}/FullFunctionalTests
-            | tee xcodebuild.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
+            -testPlan FullFunctionalTests \
+            -resultBundlePath ${{ env.test_results_directory }}/FullFunctionalTests \
+            | tee xcodebuild-fullfunctionaltestplan.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
         working-directory: ${{ env.browser }}
         continue-on-error: true
