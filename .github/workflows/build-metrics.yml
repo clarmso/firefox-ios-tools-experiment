@@ -8,7 +8,7 @@ env:
     test_results_directory: /Users/runner/tmp
 
 jobs:
-  Focus:
+  Focus-iOS-Tests:
     name: Focus iOS
     runs-on: macos-14
     strategy:
