@@ -12,6 +12,7 @@ jobs:
     name: Focus
     runs-on: macos-14
     strategy:
+      fail-fast: false
       matrix:
         include:
           - ios_version: 16.4
