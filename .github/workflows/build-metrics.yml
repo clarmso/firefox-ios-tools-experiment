@@ -8,7 +8,6 @@ env:
     ios_simulator_default: iPhone 14
     ios_version: 16.4
     xcodebuild_scheme: Focus
-    xcodebuild_target: XCUITest
     test_results_directory: /Users/runner/tmp
 
 jobs:
@@ -69,7 +68,7 @@ jobs:
         run: |
           xcodebuild test-without-building \
             -project Blockzilla.xcodeproj -scheme Focus \
-            -target XCUITest -configuration FocusDebug \
+            -configuration FocusDebug \
             CODE_SIGNING_ALLOWED=NO \
             -destination 'platform=iOS Simulator,name=${{ env.ios_simulator_default }},OS=${{ env.ios_version }}' \
             -testPlan SmokeTest
