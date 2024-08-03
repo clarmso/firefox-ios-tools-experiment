@@ -33,6 +33,8 @@ jobs:
           brew update
           brew install blacktop/tap/ipsw
           pip3 install virtualenv pipenv
+          gem install xcpretty -v 0.3.0
+          pip install blockkit==1.9.1
       - name: Setup Xcode
         id: xcode
         run: |
@@ -68,6 +70,8 @@ jobs:
             CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan UnitTests
+            -resultBundlePath ${{ env.test_results_directory }}/UnitTests
+            | tee xcodebuild.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
         working-directory: ${{ env.browser }}
         continue-on-error: true
       - name: Run smoke tests
@@ -78,6 +82,8 @@ jobs:
             CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan SmokeTest
+            -resultBundlePath ${{ env.test_results_directory }}/SmokeTest
+            | tee xcodebuild.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
         working-directory: ${{ env.browser }}
         continue-on-error: true
       - name: Run full functional tests
@@ -88,5 +94,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan FullFunctionalTests
+            -resultBundlePath ${{ env.test_results_directory }}/FullFunctionalTests
+            | tee xcodebuild.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
         working-directory: ${{ env.browser }}
         continue-on-error: true
