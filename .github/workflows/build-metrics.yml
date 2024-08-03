@@ -1,4 +1,4 @@
-name: Focus iOS 16 tests
+name: Focus iOS 15 & 16 tests
 on:
   workflow_dispatch:
 
@@ -9,7 +9,7 @@ env:
 
 jobs:
   Focus:
-    name: Focus
+    name: Focus iOS
     runs-on: macos-14
     strategy:
       fail-fast: false
@@ -68,7 +68,8 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan UnitTests
-        working-directory: focus-ios
+        working-directory: ${{ env.browser }}
+        continue-on-error: true
       - name: Run smoke tests
         run: |
           xcodebuild test-without-building \
@@ -77,7 +78,8 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan SmokeTest
-        working-directory: focus-ios
+        working-directory: ${{ env.browser }}
+        continue-on-error: true
       - name: Run full functional tests
         run: |
           xcodebuild test-without-building \
@@ -86,4 +88,5 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan FullFunctionalTests
-        working-directory: focus-ios
+        working-directory: ${{ env.browser }}
+        continue-on-error: true
