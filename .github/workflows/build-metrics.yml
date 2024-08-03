@@ -82,6 +82,7 @@ jobs:
           python ../test-fixtures/ci/convert_junit_to_markdown.py --github --${{ env.browser }} ./junit-unittests.xml ./github-unittests.md
           cat github.md >> $GITHUB_STEP_SUMMARY
           python ../test-fixtures/ci/convert_junit_to_markdown.py --slack --${{ env.browser }} ./junit-unittests.xml ./slack-unittests.json   
+        working-directory: ${{ env.browser }}
       - name: Run smoke tests
         id: run-smoketest
         run: |
@@ -102,6 +103,7 @@ jobs:
           python ../test-fixtures/ci/convert_junit_to_markdown.py --github --${{ env.browser }} --smoke ./junit-smoketest.xml ./github-smoketest.md
           cat github.md >> $GITHUB_STEP_SUMMARY
           python ../test-fixtures/ci/convert_junit_to_markdown.py --slack --${{ env.browser }} --smoke ./junit-smoketest.xml ./slack-smoketest.json
+        working-directory: ${{ env.browser }}
       - name: Run full functional tests
         id: run-fullfunctionaltests
         run: |
@@ -122,3 +124,4 @@ jobs:
           python ../test-fixtures/ci/convert_junit_to_markdown.py --github --${{ env.browser }} ./junit-fullfunctionaltests.xml ./github-fullfunctionaltests.md
           cat github.md >> $GITHUB_STEP_SUMMARY
           python ../test-fixtures/ci/convert_junit_to_markdown.py --slack --${{ env.browser }} ./junit-fullfunctionaltests.xml ./slack-fullfunctionaltests.json  
+        working-directory: ${{ env.browser }}
