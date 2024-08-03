@@ -51,8 +51,8 @@ jobs:
         id: compile
         run: |
           xcodebuild build-for-testing \
-            -project Blockzilla.xcodeproj -scheme Focus -target XCUITest \
-            -configuration FocusDebug\
+            -project Blockzilla.xcodeproj -scheme Focus \
+            -configuration FocusDebug \
             CODE_SIGNING_ALLOWED=NO -destination \
             'platform=iOS Simulator,name=${{ env.ios_simulator_default }},OS=${{ env.ios_version }}'
         working-directory: focus-ios
@@ -60,7 +60,7 @@ jobs:
         run: |
           xcodebuild test-without-building \
             -project Blockzilla.xcodeproj -scheme Focus \
-            -target XCUITest -configuration FocusDebug \
+            -configuration FocusDebug \
             CODE_SIGNING_ALLOWED=NO \
             -destination 'platform=iOS Simulator,name=${{ env.ios_simulator_default }},OS=${{ env.ios_version }}' \
             -testPlan UnitTests
@@ -78,7 +78,7 @@ jobs:
         run: |
           xcodebuild test-without-building \
             -project Blockzilla.xcodeproj -scheme Focus \
-            -target XCUITest -configuration FocusDebug \
+            -configuration FocusDebug \
             CODE_SIGNING_ALLOWED=NO \
             -destination 'platform=iOS Simulator,name=${{ env.ios_simulator_default }},OS=${{ env.ios_version }}' \
             -testPlan FullFunctionalTests
