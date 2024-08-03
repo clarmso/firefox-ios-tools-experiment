@@ -6,6 +6,7 @@ env:
     browser: focus-ios
     xcode_version: 15.4
     ios_simulator_default: iPhone 14
+    ios_version: 16.4
     xcodebuild_scheme: Focus
     xcodebuild_target: XCUITest
     test_results_directory: /Users/runner/tmp
@@ -36,11 +37,11 @@ jobs:
           xcodebuild -version
           ./checkout.sh
           ./bootstrap.sh --force
-      - name: Create iOS 16 simulator
+      - name: Create iOS ${{ env.ios_version }} simulator
         id: setup-simulator
         run: |
           brew install blacktop/tap/ipsw
-          echo "iOS 16.4 Simulator" | ipsw download xcode --sim
+          echo "iOS ${{ env.ios_version }} Simulator" | ipsw download xcode --sim
           dmg_file=$(ls *.dmg)
           curl https://gist.githubusercontent.com/testableapple/3688bbf7c0e475aa915bd34b7cf7876e/raw/db91bbbc5ace3835de34db5030c6b04e519847e5/install_runtime.sh > install_runtime.sh
           chmod u+x install_runtime.sh
@@ -50,35 +51,35 @@ jobs:
         id: compile
         run: |
           xcodebuild build-for-testing \
-            -project Blockzilla.xcodeproj -scheme Focus \
-            -testPlan SmokeTest -configuration FocusDebug\
+            -project Blockzilla.xcodeproj -scheme Focus -target XCUITest \
+            -configuration FocusDebug\
             CODE_SIGNING_ALLOWED=NO -destination \
-            'platform=iOS Simulator,name=iPhone 14 Pro Max,OS=16.4'
+            'platform=iOS Simulator,name=${{ env.ios_simulator_default }},OS=${{ env.ios_version }}'
         working-directory: focus-ios
       - name: Run unit tests
         run: |
           xcodebuild test-without-building \
-            -scheme Focus \
-            -project Blockzilla.xcodeproj -configuration FocusDebug \
+            -project Blockzilla.xcodeproj -scheme Focus \
+            -target XCUITest -configuration FocusDebug \
             CODE_SIGNING_ALLOWED=NO \
-            -destination 'platform=iOS Simulator,name=iPhone 14 Pro Max,OS=16.4' \
+            -destination 'platform=iOS Simulator,name=${{ env.ios_simulator_default }},OS=${{ env.ios_version }}' \
             -testPlan UnitTests
         working-directory: focus-ios
       - name: Run smoke tests
         run: |
           xcodebuild test-without-building \
-            -scheme Focus \
-            -project Blockzilla.xcodeproj -configuration FocusDebug \
+            -project Blockzilla.xcodeproj -scheme Focus \
+            -target XCUITest -configuration FocusDebug \
             CODE_SIGNING_ALLOWED=NO \
-            -destination 'platform=iOS Simulator,name=iPhone 14 Pro Max,OS=16.4' \
+            -destination 'platform=iOS Simulator,name=${{ env.ios_simulator_default }},OS=${{ env.ios_version }}' \
             -testPlan SmokeTest
         working-directory: focus-ios
       - name: Run full functional tests
         run: |
           xcodebuild test-without-building \
-            -scheme Focus \
-            -project Blockzilla.xcodeproj -configuration FocusDebug \
+            -project Blockzilla.xcodeproj -scheme Focus \
+            -target XCUITest -configuration FocusDebug \
             CODE_SIGNING_ALLOWED=NO \
-            -destination 'platform=iOS Simulator,name=iPhone 14 Pro Max,OS=16.4' \
+            -destination 'platform=iOS Simulator,name=${{ env.ios_simulator_default }},OS=${{ env.ios_version }}' \
             -testPlan FullFunctionalTests
         working-directory: focus-ios
