@@ -58,7 +58,7 @@ jobs:
         id: setup-simulator
         run: |
           # Install old simulator
-          echo "iOS ${{ matrix.ios_version }} Simulator Runtime" | ipsw download xcode --sim
+          echo "iOS ${{ matrix.ios_version }} Simulator" | ipsw download xcode --sim
           dmg_file=$(ls *.dmg)
           curl https://gist.githubusercontent.com/testableapple/3688bbf7c0e475aa915bd34b7cf7876e/raw/db91bbbc5ace3835de34db5030c6b04e519847e5/install_runtime.sh > install_runtime.sh
           chmod u+x install_runtime.sh
