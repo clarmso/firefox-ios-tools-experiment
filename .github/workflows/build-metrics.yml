@@ -33,6 +33,9 @@ jobs:
           brew update
           brew install blacktop/tap/ipsw
           pip3 install virtualenv pipenv
+          gem install xcpretty -v 0.3.0
+          pip install blockkit==1.9.1
+          npm install -g junit-report-merger@7.0.0
       - name: Setup Xcode
         id: xcode
         run: |
@@ -44,7 +47,10 @@ jobs:
       - name: Create iOS ${{ matrix.ios_version }} simulator
         id: setup-simulator
         run: |
-          brew install blacktop/tap/ipsw
+          # Delete the 18.x runtime and simulators
+          xcrun simctl runtime delete 22A5346a
+          xcrun simctl runtime delete 22B5023e
+          xcrun simctl delete unavailable
           echo "iOS ${{ matrix.ios_version }} Simulator" | ipsw download xcode --sim
           dmg_file=$(ls *.dmg)
           curl https://gist.githubusercontent.com/testableapple/3688bbf7c0e475aa915bd34b7cf7876e/raw/db91bbbc5ace3835de34db5030c6b04e519847e5/install_runtime.sh > install_runtime.sh
