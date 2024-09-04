@@ -17,7 +17,7 @@ jobs:
         include:
           - ios_version: 16.4
             ios_simulator: iPhone 14
-          - ios_version: 15.4
+          - ios_version: 15.5
             ios_simulator: iPhone 13
     steps:
       - name: Check out source code
@@ -46,10 +46,10 @@ jobs:
           ./bootstrap.sh --force
 
           # Free up disk space: Delete Xcode and its runtimes (iOS 18.1, 18.0) not in use
-          sudo rm -fr /Applications/Xcode_16*
           xcrun simctl runtime delete 22B5023e 
           xcrun simctl runtime delete 22A5346a
           xcrun simctl delete unavailable
+          sudo rm -fr /Applications/Xcode_16*
       - name: Create iOS ${{ matrix.ios_version }} simulator
         id: setup-simulator
         run: |
