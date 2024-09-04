@@ -44,19 +44,19 @@ jobs:
           xcodebuild -version
           ./checkout.sh
           ./bootstrap.sh --force
+
+          # Free up disk space: Delete watchOS, tvOS and visionOS runtimes and their simulators
+          xcrun simctl list runtimes visionOS | grep visionOS | awk '{ print $5 }' | tr ')\n' ' ' >> sims.txt
+          xcrun simctl list runtimes watchOS | grep watchOS | awk '{ print $5 }' | tr ')\n' ' ' >> sims.txt
+          xcrun simctl list runtimes tvOS | grep tvOS | awk '{ print $5 }' | tr ')\n' ' ' >> sims.txt
+          xcrun simctl runtime delete `cat sims.txt`
+          xcrun simctl delete unavailable
+
+          # Free up disk space: Delete Xcode 16.x
+          rm -fr /Applications/Xcode_16*
       - name: Create iOS ${{ matrix.ios_version }} simulator
         id: setup-simulator
         run: |
-          # Delete watchOS, tvOS and visionOS runtimes and their simulators to free up disk space. They are not needed.
-          xcrun simctl list runtimes visionOS | grep visionOS | awk '{ print $5 }' | tr ')\n' ' ' > sim-visionOS.txt
-          xcrun simctl runtime delete `cat sim-visionOS.txt`
-          xcrun simctl list runtimes watchOS | grep watchOS | awk '{ print $5 }' | tr ')\n' ' ' > sim-watchOS.txt
-          xcrun simctl runtime delete `cat sim-watchOS.txt`
-          xcrun simctl list runtimes tvOS | grep tvOS | awk '{ print $5 }' | tr ')\n' ' ' > sim-tvOS.txt
-          xcrun simctl runtime delete `cat sim-tvOS.txt`
-          xcrun simctl delete unavailable
-          cat sim-*.txt
-
           # Install old simulator
           echo "iOS ${{ matrix.ios_version }} Simulator Runtime" | ipsw download xcode --sim
           dmg_file=$(ls *.dmg)
@@ -84,8 +84,8 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan SmokeTest \
-            -resultBundlePath ${{ env.test_results_directory }}/results-smoketest \
-            | tee xcodebuild-smoketest.log | xcpretty -r junit --output ./junit-smoketest.xml && exit ${PIPESTATUS[0]}
+            -resultBundlePath ${{ env.test_results_directory }}/results-smoketests \
+            | tee xcodebuild-smoketests.log | xcpretty -r junit --output ./junit-smoketests.xml && exit ${PIPESTATUS[0]}
         working-directory: ${{ env.browser }}
         continue-on-error: true
       - name: Run full functional tests
