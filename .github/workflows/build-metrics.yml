@@ -48,11 +48,11 @@ jobs:
         id: setup-simulator
         run: |
           # Delete watchOS, tvOS and visionOS runtimes and their simulators to free up disk space. They are not needed.
-          xcrun simctl list runtimes visionOS | grep visionOS | awk '{ print $5 }' | sed 's/)//g' > sim-visionOS.txt
+          xcrun simctl list runtimes visionOS | grep visionOS | awk '{ print $5 }' | tr ')\n' ' ' > sim-visionOS.txt
           xcrun simctl runtime delete `cat sim-visionOS.txt`
-          xcrun simctl list runtimes watchOS | grep watchOS | awk '{ print $5 }' | sed 's/)//g' > sim-watchOS.txt
+          xcrun simctl list runtimes watchOS | grep watchOS | awk '{ print $5 }' | tr ')\n' ' ' > sim-watchOS.txt
           xcrun simctl runtime delete `cat sim-watchOS.txt`
-          xcrun simctl list runtimes tvOS | grep tvOS | awk '{ print $5 }' | sed 's/)//g' > sim-tvOS.txt
+          xcrun simctl list runtimes tvOS | grep tvOS | awk '{ print $5 }' | tr ')\n' ' ' > sim-tvOS.txt
           xcrun simctl runtime delete `cat sim-tvOS.txt`
           xcrun simctl delete unavailable
           cat sim-*.txt
@@ -65,7 +65,7 @@ jobs:
           sh install_runtime.sh "${dmg_file}"
           xcrun simctl list runtimes
           xcrun simctl list devices iphone
-          xcrun simctl create "${{ matrix.ios_simulator }}" "${{ matrix.ios_simulator }}" com.apple.CoreSimulator.SimRuntime.iOS-`echo ${{ matrix.ios_version }} | sed 's/\./-/g`
+          xcrun simctl create "${{ matrix.ios_simulator }}" "${{ matrix.ios_simulator }}" com.apple.CoreSimulator.SimRuntime.iOS-`echo ${{ matrix.ios_version }} | sed 's/\./-/g'`
       - name: Build Focus
         id: compile
         run: |
