@@ -33,8 +33,6 @@ jobs:
           brew update
           brew install blacktop/tap/ipsw
           pip3 install virtualenv pipenv
-          gem install xcpretty -v 0.3.0
-          pip install blockkit==1.9.1
       - name: Setup Xcode
         id: xcode
         run: |
@@ -59,72 +57,70 @@ jobs:
           xcodebuild build-for-testing \
             -project Blockzilla.xcodeproj -scheme Focus \
             -configuration FocusDebug \
-            CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
-            -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}'
+            CODE_SIGNING_ALLOWED=NO -destination \
+            'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}'
         working-directory: focus-ios
-      - name: Run unit tests
-        id: run-unit-tests
-        run: |
-          xcodebuild test-without-building \
-            -project Blockzilla.xcodeproj -scheme Focus \
-            -configuration FocusDebug \
-            CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
-            -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
-            -testPlan UnitTests \
-            -resultBundlePath ${{ env.test_results_directory }}/UnitTests \
-            | tee xcodebuild-unittests.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
-        working-directory: ${{ env.browser }}
-        continue-on-error: true
-      - name: Print test report (UnitTests)
-        id: test-report-unittests
-        run: |
-          mv ./build/reports/junit.xml ./junit-unittests.xml
-          python ../test-fixtures/ci/convert_junit_to_markdown.py --github --${{ env.browser }} ./junit-unittests.xml ./github-unittests.md
-          cat github-unittests.md >> $GITHUB_STEP_SUMMARY
-          python ../test-fixtures/ci/convert_junit_to_markdown.py --slack --${{ env.browser }} ./junit-unittests.xml ./slack-unittests.json   
-        working-directory: ${{ env.browser }}
       - name: Run smoke tests
-        id: run-smoketest
+        id: run-smoketests
         run: |
           xcodebuild test-without-building \
             -project Blockzilla.xcodeproj -scheme Focus \
             -configuration FocusDebug \
-            CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
+            CODE_SIGNING_ALLOWED=NO \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan SmokeTest \
-            -resultBundlePath ${{ env.test_results_directory }}/SmokeTest \
-            | tee xcodebuild-smoketests.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
+            -resultBundlePath ${{ env.test_results_directory }}/results-smoketest \
+            | tee xcodebuild-smoketest.log | xcpretty -r junit --output ./junit-smoketest.xml && exit ${PIPESTATUS[0]}
         working-directory: ${{ env.browser }}
         continue-on-error: true
-      - name: Print test report (SmokeTest)
-        id: test-report-smoketest
-        run: |
-          mv ./build/reports/junit.xml ./junit-smoketest.xml
-          python ../test-fixtures/ci/convert_junit_to_markdown.py --github --${{ env.browser }} --smoke ./junit-smoketest.xml ./github-smoketest.md
-          cat github-smoketest.md >> $GITHUB_STEP_SUMMARY
-          python ../test-fixtures/ci/convert_junit_to_markdown.py --slack --${{ env.browser }} --smoke ./junit-smoketest.xml ./slack-smoketest.json
-        working-directory: ${{ env.browser }}
       - name: Run full functional tests
         id: run-fullfunctionaltests
         run: |
           xcodebuild test-without-building \
             -project Blockzilla.xcodeproj -scheme Focus \
             -configuration FocusDebug \
-            CODE_SIGNING_ALLOWED=NO ARCH="arm64" \
+            CODE_SIGNING_ALLOWED=NO \
             -destination 'platform=iOS Simulator,name=${{ matrix.ios_simulator }},OS=${{ matrix.ios_version }}' \
             -testPlan FullFunctionalTests \
-            -resultBundlePath ${{ env.test_results_directory }}/FullFunctionalTests \
-            | tee xcodebuild-fullfunctionaltests.log | xcpretty -r junit && exit ${PIPESTATUS[0]}
+            -resultBundlePath ${{ env.test_results_directory }}/results-fullfunctionaltests \
+            | tee xcodebuild-fullfunctionaltests.log | xcpretty -r junit --output ./junit-fullfunctionaltests.xml && exit ${PIPESTATUS[0]}
         working-directory: ${{ env.browser }}
         continue-on-error: true
-      - name: Print test report (FullFunctionalTests)
-        id: test-report-fullfunctionaltests
+      - name: Determine pass/fail status
+        id: passfail
         run: |
-          mv ./build/reports/junit.xml ./junit-fullfunctionaltests.xml
-          python ../test-fixtures/ci/convert_junit_to_markdown.py --github --${{ env.browser }} ./junit-fullfunctionaltests.xml ./github-fullfunctionaltests.md
-          cat github-fullfunctionaltests.md >> $GITHUB_STEP_SUMMARY
-          python ../test-fixtures/ci/convert_junit_to_markdown.py --slack --${{ env.browser }} ./junit-fullfunctionaltests.xml ./slack-fullfunctionaltests.json  
-        working-directory: ${{ env.browser }}
+          echo "Smoke Tests status: "${{ steps.run-smoketests.outcome }}
+          echo "Full Functional Tests status: "${{ steps.run-fullfunctionaltests.outcome }}
+          if [[ ${{ steps.run-smoketests.outcome }} != 'success' 
+                || ${{ steps.run-fullfunctionaltests.outcome }} != 'success' ]]; then
+            exit 1
+          else
+            exit 0
+          fi
+        continue-on-error: true
+      - name: Print test report
+        id: test-report
+        run: |
+          jrm combined.xml junit-*.xml
+          python ../test-fixtures/ci/convert_junit_to_markdown.py --smoke --github --${{ env.browser }} ./combined.xml ./github.md
+          cat github.md >> $GITHUB_STEP_SUMMARY
+          python ../test-fixtures/ci/convert_junit_to_markdown.py --smoke --slack --${{ env.browser }} ./combined.xml ./slack.json
+          mv ./combined.xml "junit-focus-ios-${{ matrix.ios_simulator }}-${{ matrix.ios_version }}-`date +"%Y-%m-%d"`.xml"
+        working-directory:  ${{ env.browser }}
+      - name: Upload junit files
+        id: upload-junit
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: ${{ env.browser }}-${{ matrix.ios_simulator }}-${{ matrix.ios_version }}-junit-${{ github.run_number }}
+          path: ${{ env.browser }}/junit-focus-ios-*.xml
+          retention-days: 90
+      - name: Upload log file
+        id: upload-log
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: ${{ env.browser }}-${{ matrix.ios_simulator }}-xcodebuildlog-${{ github.run_number }}
+          path: ${{ env.browser }}/xcodebuild-*.log
+          retention-days: 90
       - name: Return fail status if a test fails
         run: |
-          exit ${{ steps.run-unit-tests.outcome == 'success' && steps.run-smoketest.outcome && steps.run-fullfunctionaltests.outcome && '0' || '1' }}
+          exit ${{ steps.passfail.outcome == 'success' && '0' || '1' }}   
