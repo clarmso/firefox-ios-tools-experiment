@@ -31,7 +31,8 @@ jobs:
       - name: Install packages
         run: |
           brew update
-          brew install blacktop/tap/ipsw
+          brew install aria2
+          brew install xcodesorg/made/xcodes
           pip3 install virtualenv pipenv
           gem install xcpretty -v 0.3.0
           pip install blockkit==1.9.1
@@ -47,16 +48,18 @@ jobs:
 
           # Free up disk space: Delete Xcode not in use
           sudo rm -fr /Applications/Xcode_16*
+          sudo rm -fr /Applications/Xcode_14*
       - name: Create iOS ${{ matrix.ios_version }} simulator
         id: setup-simulator
         run: |
           # Install old simulator
-          echo "iOS ${{ matrix.ios_version }} Simulator" | ipsw download xcode --sim
-          dmg_file=$(ls *.dmg)
-          curl https://gist.githubusercontent.com/testableapple/3688bbf7c0e475aa915bd34b7cf7876e/raw/db91bbbc5ace3835de34db5030c6b04e519847e5/install_runtime.sh > install_runtime.sh
-          chmod u+x install_runtime.sh
-          sh install_runtime.sh "${dmg_file}"
-          # xcrun simctl create "${{ matrix.ios_simulator }}" "${{ matrix.ios_simulator }}" com.apple.CoreSimulator.SimRuntime.iOS-`echo ${{ matrix.ios_version }} | sed 's/\./-/g'`
+          sudo xcodes runtimes install "iOS ${{ matrix.ios_version }}"
+          # echo "iOS ${{ matrix.ios_version }} Simulator" | ipsw download xcode --sim
+          # dmg_file=$(ls *.dmg)
+          # curl https://gist.githubusercontent.com/testableapple/3688bbf7c0e475aa915bd34b7cf7876e/raw/db91bbbc5ace3835de34db5030c6b04e519847e5/install_runtime.sh > install_runtime.sh
+          # chmod u+x install_runtime.sh
+          # sh install_runtime.sh "${dmg_file}"
+          xcrun simctl create "${{ matrix.ios_simulator }}" "${{ matrix.ios_simulator }}" com.apple.CoreSimulator.SimRuntime.iOS-`echo ${{ matrix.ios_version }} | sed 's/\./-/g'`
           xcrun simctl list devices iphone
       - name: Build Focus
         id: compile
