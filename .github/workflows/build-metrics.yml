@@ -106,7 +106,7 @@ jobs:
           python ../test-fixtures/ci/convert_junit_to_markdown.py --github --${{ env.browser }} ./junit-fullfunctionaltests.xml ./github-fullfunctionaltests.md
           cat github-fullfunctionaltests.md >> $GITHUB_STEP_SUMMARY
           python ../test-fixtures/ci/convert_junit_to_markdown.py --slack --${{ env.browser }} ./junit-fullfunctionaltests.xml ./slack-fullfunctionaltests.json
-          mv ./junit-smoketests.xml "junit-focus-ios-fullfunctionaltests-${{ matrix.ios_simulator }}-${{ matrix.ios_version }}-`date +"%Y-%m-%d"`.xml"
+          mv ./junit-fullfunctionaltests.xml "junit-focus-ios-fullfunctionaltests-${{ matrix.ios_simulator }}-${{ matrix.ios_version }}-`date +"%Y-%m-%d"`.xml"
         working-directory:  ${{ env.browser }}
       - name: Upload junit files
         id: upload-junit
