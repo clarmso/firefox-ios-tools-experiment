@@ -57,6 +57,7 @@ jobs:
     run-smoketests:
       name: Run smoke tests
       runs-on: macos-14
+      needs: compile
       strategy:
         fail-fast: false
         matrix:
@@ -202,6 +203,7 @@ jobs:
     run-fullfunctionaltests:
       name: Run full functional tests
       runs-on: macos-14
+      needs: compile
       strategy:
         fail-fast: false
         matrix:
