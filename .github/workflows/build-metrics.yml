@@ -49,6 +49,9 @@ jobs:
           echo "Branch: ${{ inputs.branch }}"
           sw_vers
           uname -av
+          pwd
+          df -h
+          ls
   Firefox:
     name: Firefox (Xcode ${{ inputs.xcode }}, ${{ inputs.ios_simulator }}, iOS ${{ inputs.ios_version }}, ${{ inputs.branch }} branch)
     if: ${{ inputs.run_firefox }}
