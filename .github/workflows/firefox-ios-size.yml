@@ -61,7 +61,7 @@ jobs:
             -derivedDataPath ~/DerivedData \
             -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' \
             COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO ARCH="arm64"
-          working-directory: firefox-ios
+        working-directory: firefox-ios
       - name: Query derived data size
         run: |
           echo "# Derived Data size" >> $GITHUB_STEP_SUMMARY
