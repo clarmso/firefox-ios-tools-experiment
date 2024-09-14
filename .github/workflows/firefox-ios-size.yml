@@ -39,9 +39,11 @@ jobs:
           repository: mozilla-mobile/firefox-ios
           ref: ${{ inputs.branch }}
       - name: Query source code size
+        id: query_source_code
         run: |
           source_code_size=`du -sh . | awk '{ print $1 }'`
           echo "Source code size: $source_code_size"
+          echo "source_code_size=$source_code_size" >> $GITHUB_OUTPUT
       - name: Setup Xcode
         run: |
           sudo rm -rf /Applications/Xcode.app
@@ -62,17 +64,21 @@ jobs:
             COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO ARCH="arm64"
         working-directory: firefox-ios
       - name: Query derived data size
+        id: query_derived_data
         run: |
           derived_data_size=`du -sh ~/DerivedData | awk '{ print $1 }'`
           echo "Derived data size: $derived_data_size"
+          echo "derived_data_size=$derived_data_size" >> "$GITHUB_OUTPUT"
       - name: Query app size
+        id: query_app
         run: |
           app_size=`du -sh ~/DerivedData/Build/Products/Fennec-iphonesimulator/Client.app | awk '{ print $1 }'`
           echo "App size: $app_size"
+          echo "app_size=$app_size"  >> "$GITHUB_OUTPUT"
       - name: Print report
         run: | 
-          echo "# Branch/tag/SHA ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "# Branch/tag/SHA: ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Source code size: "$source_code_size >> $GITHUB_STEP_SUMMARY
-          echo "Derived data size: "$derived_data_size >> $GITHUB_STEP_SUMMARY
-          echo "App size: "$app_size >> $GITHUB_STEP_SUMMARY
+          echo "Source code size: ${{ steps.query_source_code.outputs.source_code_size }}" >> $GITHUB_STEP_SUMMARY
+          echo "Derived data size: ${{ steps.query_derived_data.outputs.derived_data_size}}" >> $GITHUB_STEP_SUMMARY
+          echo "App size: ${{ steps.query_app.outputs.app_size }}" >> $GITHUB_STEP_SUMMARY
