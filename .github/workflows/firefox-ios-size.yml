@@ -77,7 +77,7 @@ jobs:
           echo "app_size=$app_size"  >> "$GITHUB_OUTPUT"
       - name: Print report
         run: | 
-          echo "# Branch/tag/SHA: ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "Branch/tag/SHA: ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Source code size: ${{ steps.query_source_code.outputs.source_code_size }}" >> $GITHUB_STEP_SUMMARY
           echo "Derived data size: ${{ steps.query_derived_data.outputs.derived_data_size}}" >> $GITHUB_STEP_SUMMARY
