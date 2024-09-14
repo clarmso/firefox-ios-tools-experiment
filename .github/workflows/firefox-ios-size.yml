@@ -38,6 +38,14 @@ jobs:
         with:
           repository: mozilla-mobile/firefox-ios
           ref: ${{ inputs.branch }}
+      - name: Test Print report
+        run: | 
+          current_sha=`git rev-parse HEAD`
+          echo "Branch/tag/SHA: ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
+          if [ ${{ inputs.branch }} == "main" ];
+          then
+            echo "$current_sha" >> $GITHUB_STEP_SUMMARY
+          fi
       - name: Query source code size
         id: query_source_code
         run: |
@@ -77,7 +85,12 @@ jobs:
           echo "app_size=$app_size"  >> "$GITHUB_OUTPUT"
       - name: Print report
         run: | 
+          current_sha=`git rev-parse HEAD`
           echo "Branch/tag/SHA: ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
+          if [ ${{ inputs.branch }} == "main" ];
+          then
+            echo "$current_sha" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Source code size: ${{ steps.query_source_code.outputs.source_code_size }}" >> $GITHUB_STEP_SUMMARY
           echo "Derived data size: ${{ steps.query_derived_data.outputs.derived_data_size}}" >> $GITHUB_STEP_SUMMARY
