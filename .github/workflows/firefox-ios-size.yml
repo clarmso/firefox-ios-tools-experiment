@@ -1,0 +1,76 @@
+name: Firefox iOS repo size
+on:
+  workflow_dispatch:
+    inputs:
+        runner:
+          description: "Github Actions runner"
+          default: "macos-14"
+          required: true
+          type: string
+        xcode:
+          description: "Xcode version"
+          default: "15.4"
+          required: true
+          type: string
+        ios_simulator:
+          description: "iPhone/iPad simulator"
+          default: "iPhone 15"
+          required: true
+          type: string
+        ios_version:
+          description: "iOS version"
+          default: "17.4"
+          required: true
+          type: string
+        branch:
+          description: "Branch, tag or SHA"
+          default: "main"
+          required: true
+          type: string
+
+jobs:
+  report-size:
+    name: Generate Report
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - name: Clone firefox-ios repo
+        uses: actions/checkout@v4
+        with:
+          repository: mozilla-mobile/firefox-ios
+          ref: ${{ inputs.branch }}
+      - name: Query source code size
+        run: |
+          echo "# Source code size" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          du -sh . | awk '{ print $1 }' >> $GITHUB_STEP_SUMMARY
+      - name: Setup Xcode
+        run: |
+          sudo rm -rf /Applications/Xcode.app
+          sudo xcode-select -s /Applications/Xcode_${{ inputs.xcode }}.app/Contents/Developer
+          xcodebuild -version
+      - name: Run setup scripts for Firefox
+        run: |
+          sh ./bootstrap.sh --force
+      - name: Compile source code
+        id: compile
+        run: |
+          xcodebuild \
+            build-for-testing \
+            -project Client.xcodeproj \
+            -scheme Fennec \
+            -configuration Fennec \
+            -sdk iphonesimulator \
+            -derivedDataPath ~/DerivedData \
+            -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' \
+            COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO ARCH="arm64"
+          working-directory: firefox-ios
+      - name: Query derived data size
+        run: |
+          echo "# Derived Data size" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          du -sh ~/DerivedData | awk '{ print $1 }' >> $GITHUB_STEP_SUMMARY
+      - name: Query app size
+        run: |
+          echo "# App size" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          du -sh ~/DerivedData/Client-*/Build/Products/Fennec-iphonesimulator/Client.app/ | awk '{ print $1 }' >> $GITHUB_STEP_SUMMARY
