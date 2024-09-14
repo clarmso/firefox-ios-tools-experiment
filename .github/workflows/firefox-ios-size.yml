@@ -41,7 +41,7 @@ jobs:
       - name: Query source code size
         run: |
           source_size=`du -sh . | awk '{ print $1 }'`
-          echo "Source code size: ${{ source_code_size }}"
+          echo "Source code size: $source_code_size"
       - name: Setup Xcode
         run: |
           sudo rm -rf /Applications/Xcode.app
@@ -71,6 +71,6 @@ jobs:
         run: | 
           echo "# Branch/tag/SHA ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Source code size: ${{ source_code_size }}" >> $GITHUB_STEP_SUMMARY
-          echo "Derived data size: ${{ derived_data_size }}" >> $GITHUB_STEP_SUMMARY
-          echo "App size: ${{ app_size }}" >> $GITHUB_STEP_SUMMARY
+          echo "Source code size: $source_code_size" >> $GITHUB_STEP_SUMMARY
+          echo "Derived data size: $derived_data_size" >> $GITHUB_STEP_SUMMARY
+          echo "App size: $app_size" >> $GITHUB_STEP_SUMMARY
