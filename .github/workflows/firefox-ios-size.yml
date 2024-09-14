@@ -64,13 +64,15 @@ jobs:
       - name: Query derived data size
         run: |
           derived_data_size=`du -sh ~/DerivedData | awk '{ print $1 }'`
+          echo "Derived data size: $derived_data_size"
       - name: Query app size
         run: |
           app_size=`du -sh ~/DerivedData/Build/Products/Fennec-iphonesimulator/Client.app | awk '{ print $1 }'`
+          echo "App size: $app_size"
       - name: Print report
         run: | 
           echo "# Branch/tag/SHA ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Source code size: $source_code_size" >> $GITHUB_STEP_SUMMARY
-          echo "Derived data size: $derived_data_size" >> $GITHUB_STEP_SUMMARY
-          echo "App size: $app_size" >> $GITHUB_STEP_SUMMARY
+          echo "Source code size: "$source_code_size >> $GITHUB_STEP_SUMMARY
+          echo "Derived data size: "$derived_data_size >> $GITHUB_STEP_SUMMARY
+          echo "App size: "$app_size >> $GITHUB_STEP_SUMMARY
