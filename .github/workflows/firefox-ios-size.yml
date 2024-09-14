@@ -40,7 +40,7 @@ jobs:
           ref: ${{ inputs.branch }}
       - name: Query source code size
         run: |
-          source_size=`du -sh . | awk '{ print $1 }'`
+          source_code_size=`du -sh . | awk '{ print $1 }'`
           echo "Source code size: $source_code_size"
       - name: Setup Xcode
         run: |
