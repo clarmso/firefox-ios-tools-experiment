@@ -56,10 +56,8 @@ jobs:
         run: |
           xcodebuild \
             build-for-testing \
-            -project Client.xcodeproj \
+            -target Client \
             -scheme Fennec \
-            -configuration Fennec \
-            -sdk iphonesimulator \
             -derivedDataPath ~/DerivedData \
             -destination 'platform=iOS Simulator,name=${{ inputs.ios_simulator }},OS=${{ inputs.ios_version }}' \
             COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO ARCH="arm64"
