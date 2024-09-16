@@ -41,7 +41,7 @@ jobs:
       - name: Query source code size
         id: query_source_code
         run: |
-          source_code_size=`du -sh ./firefox-ios | awk '{ print $1 }'`
+          source_code_size=`du -sh . | awk '{ print $1 }'`
           echo "Source code size: $source_code_size"
           echo "source_code_size=$source_code_size" >> $GITHUB_OUTPUT
       - name: Setup Xcode
