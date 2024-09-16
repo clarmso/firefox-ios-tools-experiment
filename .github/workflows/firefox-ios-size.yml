@@ -79,7 +79,7 @@ jobs:
         run: | 
           current_sha=`git rev-parse HEAD`
           echo "Branch/tag/SHA: ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
-          if [[ ${{ inputs.branch }} == "main" || ${{ inputs.branch }} ~= "release" ]];
+          if [[ "${{ inputs.branch }}"" == "main" || "${{ inputs.branch }}" ~= "release" ]];
           then
             echo "Branch: ${{ inputs.branch }} ($current_sha)" >> $GITHUB_STEP_SUMMARY
           else
