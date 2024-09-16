@@ -78,13 +78,10 @@ jobs:
       - name: Print report
         run: | 
           current_sha=`git rev-parse HEAD`
-          echo "Branch/tag/SHA: ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
-          if [[ "${{ inputs.branch }}" == "main" || "${{ inputs.branch }}" ~= "release" ]];
-          then
-            echo "Branch: ${{ inputs.branch }} ($current_sha)" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "Branch/tag/SHA: ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
-          fi
+          current_branch=`git rev-parse --abbrev-ref HEAD`
+          last_modified=`git log --pretty=format:"%ad" -1`
+          echo "Branch: ${{ inputs.branch }} ($current_sha)" >> $GITHUB_STEP_SUMMARY
+          echo "Last Modified: $last_modified" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Source code size: ${{ steps.query_source_code.outputs.source_code_size }}" >> $GITHUB_STEP_SUMMARY
           echo "Derived data size: ${{ steps.query_derived_data.outputs.derived_data_size}}" >> $GITHUB_STEP_SUMMARY
