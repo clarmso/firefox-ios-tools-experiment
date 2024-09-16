@@ -80,7 +80,7 @@ jobs:
           current_sha=`git rev-parse HEAD`
           current_branch=`git rev-parse --abbrev-ref HEAD`
           last_modified=`git log --pretty=format:"%ad" -1`
-          echo "Branch: ${{ inputs.branch }} ($current_sha)" >> $GITHUB_STEP_SUMMARY
+          echo "Branch: ${{ inputs.branch }} (https://github.com/mozilla-mobile/firefox-ios/commit/$current_sha)" >> $GITHUB_STEP_SUMMARY
           echo "Last Modified: $last_modified" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Source code size: ${{ steps.query_source_code.outputs.source_code_size }}" >> $GITHUB_STEP_SUMMARY
