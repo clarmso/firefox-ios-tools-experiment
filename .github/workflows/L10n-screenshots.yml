@@ -7,6 +7,10 @@ on:
         default: "en"
         required: true
         type: string
+      branch:
+        default: main
+        required: true
+        type: string
 
 jobs:
     get-screenshots:
@@ -17,11 +21,11 @@ jobs:
               uses: actions/checkout@v4
               with:
                 repository: mozilla-mobile/firefox-ios
-                ref: main
+                ref: ${{ inputs.branch }}
             - name: Setup Xcode
               run: |
                   sudo rm -rf /Applications/Xcode.app
-                  sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer
+                  sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
                   xcodebuild -version
             - name: Run setup scripts for Firefox
               run: |
