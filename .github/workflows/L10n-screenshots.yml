@@ -4,7 +4,7 @@ on:
     inputs:
       locales:
         description: "Locales"
-        default: "en"
+        default: en
         required: true
         type: string
       branch:
@@ -33,3 +33,8 @@ jobs:
             - name: Generate screenshots
               run: |
                   firefox-ios/l10n-screenshots.sh ${{ inputs.locales }}
+            - name: Upload screenshots
+              uses: actions/upload-artifact@v4.3.3
+              with:
+                path: ./l10n-screenshots
+                retention-days: 90
