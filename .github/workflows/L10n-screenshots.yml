@@ -1,0 +1,31 @@
+name: L10n screenshots
+on:
+  workflow_dispatch:
+    inputs:
+      locales:
+        description: "Locales"
+        default: "en"
+        required: true
+        type: string
+
+jobs:
+    get-screenshots:
+        name: Generate screenshots
+        runs-on: macos-15
+        steps:
+            - name: Clone firefox-ios repo
+              uses: actions/checkout@v4
+              with:
+                repository: mozilla-mobile/firefox-ios
+                ref: main
+            - name: Setup Xcode
+              run: |
+                  sudo rm -rf /Applications/Xcode.app
+                  sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer
+                  xcodebuild -version
+            - name: Run setup scripts for Firefox
+              run: |
+                  sh ./bootstrap.sh --force
+            - name: Generate screenshots
+              run: |
+                  firefox-ios/l10n-screenshots.sh ${{ inputs.locales }}
