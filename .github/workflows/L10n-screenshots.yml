@@ -31,6 +31,7 @@ jobs:
               run: |
                   sh ./bootstrap.sh --force
             - name: Generate screenshots
+              continue-on-error: true
               run: |
                   firefox-ios/l10n-screenshots.sh ${{ inputs.locales }}
             - name: Upload screenshots
