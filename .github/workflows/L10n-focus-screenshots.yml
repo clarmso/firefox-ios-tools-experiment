@@ -34,7 +34,7 @@ jobs:
             - name: Generate screenshots
               continue-on-error: true
               run: |
-                  focus-ios/l10n-screenshots.sh --test-without-building ab af an ar az be bg bn bo br bs ca co cs cy da de el en-CA en-GB en-US eo es es-AR es-CL es-ES es-MX et eu fa fi fr ga-IE gd gl gu-IN he hi-IN hr hu hy-AM ia id is it ja jv ka kk km kn ko lo lt lv ml mr ms my nb-NO ne-NP nl nn-NO oc or pa-IN pl pt-BR pt-PT rm ro ru si sk sl sq su sv-SE ta te th tl tr tt ug uk ur uz vi zh-CN zh-TW
+                  focus-ios/l10n-screenshots.sh --test-without-building ab, af, an, ar, az, be, bg, bn, bo, br, bs, ca, co, cs, cy, da, de, el, en-CA, en-GB, en-US, eo, es, es-AR, es-CL, es-ES, es-MX, et, eu, fa, zh-TW
             - name: Upload screenshots
               uses: actions/upload-artifact@v4.3.3
               with:
