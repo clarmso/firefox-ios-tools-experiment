@@ -3,7 +3,7 @@ on: push
 
 jobs:
   hello:
-    runs-on: macOS15
+    runs-on: macos-15
     steps:
         - name: Call reusable
           uses: ./.github/workflows/reusable.yml
