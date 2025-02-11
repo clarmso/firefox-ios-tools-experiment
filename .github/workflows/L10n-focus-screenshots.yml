@@ -12,16 +12,16 @@ jobs:
         name: Get locales
         runs-on: macos-15
         outputs:
-          group1: "Hello??!??!"
-          group2: ${{ steps.locales.outputs.group2 }}
-          group3: ${{ steps.locales.outputs.group3 }}         
+          group1: ${{ steps.my_locales.outputs.group1 }}
+          group2: ${{ steps.my_locales.outputs.group2 }}
+          group3: ${{ steps.my_locales.outputs.group3 }}         
         steps:
             - name: Clone firefoxios-l01n repo
               uses: actions/checkout@v4
               with:
                 repository: mozilla-l10n/firefoxios-l10n
             - name: Determine locales needed
-              id: locales
+              id: my_locales
               run: |
                 ls | grep -e "^..$" -e "^..-..$" > locales.txt
                 split -n 3 locales.txt locales-
