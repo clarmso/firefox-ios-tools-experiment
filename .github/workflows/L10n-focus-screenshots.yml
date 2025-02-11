@@ -12,7 +12,7 @@ jobs:
         name: Get locales
         runs-on: macos-15
         outputs:
-          group1: ${{ steps.locales.outputs.group1 }}
+          group1: "Hello??!??!"
           group2: ${{ steps.locales.outputs.group2 }}
           group3: ${{ steps.locales.outputs.group3 }}         
         steps:
