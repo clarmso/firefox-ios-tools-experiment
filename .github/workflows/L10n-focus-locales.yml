@@ -1,8 +1,8 @@
 name: L10n Focus iOS screenshots (one set of locales only)
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      locales:
+      locale_group:
         required: true
         type: string
 
@@ -11,6 +11,30 @@ jobs:
         name: Generate screenshots
         runs-on: macos-15
         steps:
+            - name: Clone firefoxios-l01n repo
+              uses: actions/checkout@v4
+              with:
+                repository: mozilla-l10n/firefoxios-l10n
+            - name: Determine locales needed
+              id: my_locales
+              run: |
+                ls | grep -e "^..$" -e "^..-..$" > locales.txt
+                split -n 3 locales.txt locales-
+                group1=`tr '\n' ',' < locales-aa`
+                group2=`tr '\n' ',' < locales-ab`
+                group3=`tr '\n' ',' < locales-ac`
+                if [[ "${{ inputs.locale_group }}" == "1" ]]; then
+                  echo $group1
+                  echo "locales=$group1" >> $GITHUB_ENV
+                elif [[ "${{ inputs.locale_group }}" == "2" ]]; then
+                  echo $group2
+                  echo "locales=$group2" >> $GITHUB_ENV
+                elif [[ "${{ inputs.locale_group }}" == "3" ]]; then
+                  echo $group3
+                  echo "locales=$group3" >> $GITHUB_ENV
+                fi
+                cat $GITHUB_ENV
+                rm -fr firefoxios-l10n/
             - name: Clone firefox-ios repo
               uses: actions/checkout@v4
               with:
@@ -32,7 +56,8 @@ jobs:
             - name: Generate screenshots
               continue-on-error: true
               run: |
-                  focus-ios/l10n-screenshots.sh --test-without-building ${{ inputs.locales }}
+                  if [[ "${{ inputs.locale_group }}" == "1" ]]; then
+                  focus-ios/l10n-screenshots.sh --test-without-building ${{ env.locales }}
             - name: Upload screenshots
               uses: actions/upload-artifact@v4.3.3
               with:
