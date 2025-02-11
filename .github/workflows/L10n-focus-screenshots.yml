@@ -31,4 +31,4 @@ jobs:
       needs: get_locales
       uses: ./.github/workflows/reusable.yml
       with:
-        username: ${{ github.action.job.get_locales.group1 }}
+        username: "${{ github.action.job.get_locales.group1 }}"
