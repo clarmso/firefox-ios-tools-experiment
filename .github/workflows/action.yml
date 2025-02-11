@@ -1,6 +1,6 @@
 name: L10n Focus iOS screenshots (one set of locales only)
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       locales:
         required: true
