@@ -32,4 +32,4 @@ jobs:
       with:
         username: "GitHubUser"
         secrets:
-            MY_SECRET: "Hello World"
+            MY_SECRET: ${{ secrets.MY_SECRET }}
