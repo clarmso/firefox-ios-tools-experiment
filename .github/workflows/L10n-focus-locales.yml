@@ -56,7 +56,6 @@ jobs:
             - name: Generate screenshots
               continue-on-error: true
               run: |
-                  if [[ "${{ inputs.locale_group }}" == "1" ]]; then
                   focus-ios/l10n-screenshots.sh --test-without-building ${{ env.locales }}
             - name: Upload screenshots
               uses: actions/upload-artifact@v4.3.3
