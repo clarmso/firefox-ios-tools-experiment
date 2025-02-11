@@ -38,6 +38,7 @@ jobs:
             - name: Do something?
               run: |
                 ls .github/workflows/
+                pwd
             - name: Dispatch group1 to L10n screenshots
               uses: ./.github/workflows/L10n-focus-screenshots-locales.yml
               with:
