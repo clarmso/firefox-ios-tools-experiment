@@ -11,6 +11,10 @@ jobs:
     get_locales:
         name: Get locales
         runs-on: macos-15
+        outputs:
+          group1: ${{ steps.locales.outputs.group1 }}
+          group2: ${{ steps.locales.outputs.group2 }}
+          group3: ${{ steps.locales.outputs.group3 }}         
         steps:
             - name: Clone firefoxios-l01n repo
               uses: actions/checkout@v4
@@ -31,4 +35,4 @@ jobs:
       needs: get_locales
       uses: ./.github/workflows/reusable.yml
       with:
-        username: "${{ github.action.job.get_locales.group1 }}"
+        username: ${{ needs.get_locales.outputs.group1 }}
