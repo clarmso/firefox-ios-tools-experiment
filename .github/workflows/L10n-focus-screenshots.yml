@@ -40,8 +40,8 @@ jobs:
               run: |
                 ls .github/workflows/
                 pwd
-                echo " ${{ env.get_locales.group1 }}"
+                echo $group1
             - name: Dispatch group1 to L10n screenshots
               uses: ./.github/workflows
               with:
-                locales: ${{ env.get_locales.group1 }}
+                locales: $group1
