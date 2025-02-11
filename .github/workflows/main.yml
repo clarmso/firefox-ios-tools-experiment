@@ -2,9 +2,10 @@ name: Main Workflow
 on: push
 
 jobs:
-  call-reusable:
-    uses: ./.github/workflows/reusable.yml
-    with:
-      username: "GitHubUser"
-    secrets:
-      MY_SECRET: ${{ secrets.MY_SECRET }}
+  hello:
+    runs-on: macOS15
+    steps:
+        - name: Call reusable
+          uses: ./.github/workflows/reusable.yml
+          with:
+            username: "GitHubUser"
