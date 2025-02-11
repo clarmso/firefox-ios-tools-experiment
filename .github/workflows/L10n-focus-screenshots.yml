@@ -8,8 +8,8 @@ on:
         type: string
 
 jobs:
-    get_screenshots:
-        name: Dispatch locales
+    get_locales:
+        name: Get locales
         runs-on: macos-15
         steps:
             - name: Clone firefoxios-l01n repo
@@ -27,16 +27,24 @@ jobs:
                 echo "group1=$group1" >> $GITHUB_ENV
                 echo "group2=$group2" >> $GITHUB_ENV
                 echo "group3=$group3" >> $GITHUB_ENV
+    dispatch_locales:
+        needs: get_locales
+        runs-on: macos-15
+        steps:
+            - name: Clone firefoxios-l01n repo
+              uses: actions/checkout@v4
+              with:
+                repository: clarmso/firefox-ios-tools-experiment
             - name: Dispatch group1 to L10n screenshots
               uses: ./.github/workflows/L10n-focus-screenshots-locales.yml
               with:
-                locales: ${{ env.locales.group1 }}
+                locales: ${{ env.get_locales.locales.group1 }}
             - name: Dispatch group2 to L10n screenshots
               uses: ./.github/workflows/L10n-focus-screenshots-locales.yml
               with:
-                locales: ${{ env.locales.group2 }}
+                locales: ${{ env.get_locales_locales.group2 }}
             - name: Dispatch group1 to L10n screenshots
               uses: ./.github/workflows/L10n-focus-screenshots-locales.yml
               with:
-                locales: ${{ env.locales.group3 }}
+                locales: ${{ env.get_locales.locales.group3 }}
               
