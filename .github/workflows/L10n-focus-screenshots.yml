@@ -36,3 +36,11 @@ jobs:
       uses: ./.github/workflows/reusable.yml
       with:
         username: "${{ needs.get_locales.outputs.group1 }}"
+    hello:
+      needs: get_locales
+      name: hello
+      runs-on: macos-15
+      steps:
+        - name: Hello World!
+          run: |
+            echo "${{ needs.get_locales.outputs.group1 }}"
