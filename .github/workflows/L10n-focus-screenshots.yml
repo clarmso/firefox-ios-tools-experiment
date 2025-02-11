@@ -8,36 +8,35 @@ on:
         type: string
 
 jobs:
-    get-screenshots:
-        name: Generate screenshots
+    get_screenshots:
+        name: Dispatch locales
         runs-on: macos-15
         steps:
-            - name: Clone firefox-ios repo
+            - name: Clone firefoxios-l01n repo
               uses: actions/checkout@v4
               with:
-                repository: mozilla-mobile/firefox-ios
-                ref: ${{ inputs.branch }}
-            - name: Setup Xcode
+                repository: mozilla-l10n/firefoxios-l10n
+            - name: Determine locales needed
+              id: locales
               run: |
-                  sudo rm -rf /Applications/Xcode.app
-                  sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
-                  xcodebuild -version
-            - name: Run setup scripts for Focus
-              run: |
-                  ./checkout.sh
-            - name: Compile Focus iOS
-              run: |
-                  xcodebuild build-for-testing -scheme FocusSnapshotTests \
-                    -project focus-ios/Blockzilla.xcodeproj \
-                    -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' \
-                    -derivedDataPath l10n-screenshots-dd
-            - name: Generate screenshots
-              continue-on-error: true
-              run: |
-                  focus-ios/l10n-screenshots.sh --test-without-building ab, af, an, ar, az, be, bg, bn, bo, br, bs, ca, co, cs, cy, da, de, el, en-CA, en-GB, en-US, eo, es, es-AR, es-CL, es-ES, es-MX, et, eu, fa, zh-TW
-            - name: Upload screenshots
-              uses: actions/upload-artifact@v4.3.3
+                ls | grep -e "^..$" -e "^..-..$" > locales.txt
+                split -n 3 locales.txt locales-
+                group1=`tr '\n' ',' < locales-aa`
+                group2=`tr '\n' ',' < locales-ab`
+                group3=`tr '\n' ',' < locales-ac`
+                echo "group1=$group1" >> $GITHUB_ENV
+                echo "group2=$group2" >> $GITHUB_ENV
+                echo "group3=$group3" >> $GITHUB_ENV
+            - name: Dispatch group1 to L10n screenshots
+              uses: ./.github/workflows/L10n-focus-screenshots-locales.yml
               with:
-                path: ./l10n-screenshots
-                retention-days: 90
-                name: Screenshots
+                locales: ${{ env.locales.group1 }}
+            - name: Dispatch group2 to L10n screenshots
+              uses: ./.github/workflows/L10n-focus-screenshots-locales.yml
+              with:
+                locales: ${{ env.locales.group2 }}
+            - name: Dispatch group1 to L10n screenshots
+              uses: ./.github/workflows/L10n-focus-screenshots-locales.yml
+              with:
+                locales: ${{ env.locales.group3 }}
+              
