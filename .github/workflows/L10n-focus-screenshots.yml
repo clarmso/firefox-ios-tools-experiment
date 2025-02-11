@@ -27,16 +27,9 @@ jobs:
                 echo "group1=$group1" >> $GITHUB_ENV
                 echo "group2=$group2" >> $GITHUB_ENV
                 echo "group3=$group3" >> $GITHUB_ENV
-            - name: Clone this repo
-              uses: actions/checkout@v4
-              with:
-                repository: clarmso/firefox-ios-tools-experiment
-            - name: Do something?
-              run: |
-                ls .github/workflows/
-                pwd
-                echo ${{ env.group1 }}
-            - name: Dispatch group1 to L10n screenshots
-              uses: ./.github/workflows
-              with:
-                locales: ${{ env.group1 }}
+    call-reusable:
+      uses: ./.github/workflows/reusable.yml
+      with:
+        username: "GitHubUser"
+        secrets:
+            MY_SECRET: "Hello World"
