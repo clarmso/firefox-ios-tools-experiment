@@ -32,7 +32,7 @@ jobs:
             - name: Generate screenshots
               continue-on-error: true
               run: |
-                  focus-ios/l10n-screenshots.sh --test-without-building ${{ github.event.action.inputs.locales }}
+                  focus-ios/l10n-screenshots.sh --test-without-building ${{ env.get_locales.group1 }}
             - name: Upload screenshots
               uses: actions/upload-artifact@v4.3.3
               with:

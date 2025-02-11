@@ -40,42 +40,8 @@ jobs:
               run: |
                 ls .github/workflows/
                 pwd
+                echo " ${{ env.get_locales.group1 }}"
             - name: Dispatch group1 to L10n screenshots
               uses: ./.github/workflows
               with:
-                locales: ${{ env.get_locales.locales.group1 }}
-    dispatch_locales_2:
-        name: Dispatch locales 2
-        needs: get_locales
-        runs-on: macos-15
-        steps:
-            - name: Clone this repo
-              uses: actions/checkout@v4
-              with:
-                repository: clarmso/firefox-ios-tools-experiment
-            - name: Do something?
-              run: |
-                ls .github/workflows/
-                pwd
-            - name: Dispatch group2 to L10n screenshots
-              uses: ./.github/workflows/
-              with:
-                locales: ${{ env.get_locales_locales.group2 }}
-    dispatch_locales_3:
-        name: Dispatch locales 3
-        needs: get_locales
-        runs-on: macos-15
-        steps:
-            - name: Clone this repo
-              uses: actions/checkout@v4
-              with:
-                repository: clarmso/firefox-ios-tools-experiment
-            - name: Do something?
-              run: |
-                ls .github/workflows/
-                pwd
-            - name: Dispatch group3 to L10n screenshots
-              uses: ./.github/workflows
-              with:
-                locales: ${{ env.get_locales.locales.group3 }}
-              
+                locales: ${{ env.get_locales.group1 }}
