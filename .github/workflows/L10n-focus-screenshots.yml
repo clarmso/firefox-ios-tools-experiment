@@ -3,7 +3,10 @@ on:
   workflow_dispatch:
 
 jobs:
-    call-reusable:
+    generate-screenshots:
+      strategy:
+        matrix: 
+          group: [ "1", "2", "3" ]
       uses: ./.github/workflows/L10n-focus-locales.yml
       with:
-        locale_group: "1"
+        locale_group: "${{ matrix.group }}"

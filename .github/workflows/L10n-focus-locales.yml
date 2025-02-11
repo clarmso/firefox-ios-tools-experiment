@@ -5,6 +5,10 @@ on:
       locale_group:
         required: true
         type: string
+      branch:
+        required: false
+        type: string
+        default: "main"
 
 jobs:
     get-screenshots:
@@ -20,9 +24,9 @@ jobs:
               run: |
                 ls | grep -e "^..$" -e "^..-..$" > locales.txt
                 split -n 3 locales.txt locales-
-                group1=`tr '\n' ',' < locales-aa`
-                group2=`tr '\n' ',' < locales-ab`
-                group3=`tr '\n' ',' < locales-ac`
+                group1=`tr '\n' ' ' < locales-aa`
+                group2=`tr '\n' ' ' < locales-ab`
+                group3=`tr '\n' ' ' < locales-ac`
                 if [[ "${{ inputs.locale_group }}" == "1" ]]; then
                   echo $group1
                   echo "locales=$group1" >> $GITHUB_ENV
@@ -39,6 +43,7 @@ jobs:
               uses: actions/checkout@v4
               with:
                 repository: mozilla-mobile/firefox-ios
+                ref: ${{ inputs.branch }}
             - name: Setup Xcode
               run: |
                   sudo rm -rf /Applications/Xcode.app
