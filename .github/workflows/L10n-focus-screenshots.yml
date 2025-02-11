@@ -31,5 +31,3 @@ jobs:
       uses: ./.github/workflows/reusable.yml
       with:
         username: "GitHubUser"
-        secrets:
-            MY_SECRET: ${{ secrets.MY_SECRET }}

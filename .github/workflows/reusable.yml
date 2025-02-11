@@ -5,9 +5,6 @@ on:
       username:
         required: true
         type: string
-    secrets:
-      MY_SECRET:
-        required: true
 
 jobs:
   example-job:
@@ -16,4 +13,3 @@ jobs:
       - name: Print Inputs and Secrets
         run: |
           echo "Hello, ${{ inputs.username }}"
-          echo "Secret is set but hidden"
