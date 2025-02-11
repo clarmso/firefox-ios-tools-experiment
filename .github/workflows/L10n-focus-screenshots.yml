@@ -31,6 +31,9 @@ jobs:
                 echo "group1=$group1" >> $GITHUB_ENV
                 echo "group2=$group2" >> $GITHUB_ENV
                 echo "group3=$group3" >> $GITHUB_ENV
+                echo $group1
+                echo $group2
+                echo $group3
     call-reusable:
       needs: get_locales
       uses: ./.github/workflows/reusable.yml
