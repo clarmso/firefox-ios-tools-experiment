@@ -40,7 +40,9 @@ jobs:
       needs: get_locales
       name: hello
       runs-on: macos-15
+      env:
+        GROUP1: ${{ needs.get_locales.outputs.group1 }}
       steps:
         - name: Hello World!
           run: |
-            echo "${{ github.action.jobs.get_locales.outputs.group1 }}"
+            echo "$GROUP1"
