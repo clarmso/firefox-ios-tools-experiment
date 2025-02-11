@@ -43,4 +43,4 @@ jobs:
       steps:
         - name: Hello World!
           run: |
-            echo "${{ needs.get_locales.outputs.group1 }}"
+            echo "${{ github.action.jobs.get_locales.outputs.group1 }}"
