@@ -1,0 +1,19 @@
+name: Reusable Workflow
+on:
+  workflow_call:
+    inputs:
+      username:
+        required: true
+        type: string
+    secrets:
+      MY_SECRET:
+        required: true
+
+jobs:
+  example-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Inputs and Secrets
+        run: |
+          echo "Hello, ${{ inputs.username }}"
+          echo "Secret is set but hidden"
