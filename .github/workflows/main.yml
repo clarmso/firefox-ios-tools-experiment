@@ -6,6 +6,6 @@ jobs:
     runs-on: macos-15
     steps:
         - name: Call reusable
-          uses: reusable
+          uses: ./reusable.yml
           with:
             username: "GitHubUser"
