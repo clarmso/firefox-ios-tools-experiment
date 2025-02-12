@@ -7,7 +7,7 @@ jobs:
     name: Determine lists of locales
     runs-on: macos-15
     outputs:
-      groups: ${{ steps.confirm.outputs.groups }}
+      groups: ${{ steps.my_locales.outputs.groups }}
     steps:
       - name: Clone firefoxios-l01n repo
         uses: actions/checkout@v4
@@ -21,14 +21,11 @@ jobs:
           group1=`tr '\n' ' ' < locales-aa`
           group2=`tr '\n' ' ' < locales-ab`
           group3=`tr '\n' ' ' < locales-ac`
-          echo "locales=$group1" >> $GITHUB_ENV
-          echo "locales=$group2" >> $GITHUB_ENV
-          echo "locales=$group3" >> $GITHUB_ENV
-      - name: Confirm list of locales
-        id: confirm
-        run: |
+          echo $group1
+          echo $group2
+          echo $group3
           echo "groups=[\"$group1\",\"$group2\",\"$groups3\"]" >> $GITHUB_OUTPUT
-
+  
   generate-screenshots:
     name: Generate Screenshots
     needs: determine-locales
