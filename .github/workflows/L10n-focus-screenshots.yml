@@ -32,7 +32,7 @@ jobs:
     needs: determine-locales
     strategy:
       fail-fast: false
-      max-parallel: 1
+      max-parallel: 3
       matrix:
         locales: [ 
           "${{ needs.determine-locales.outputs.group1 }}", 
