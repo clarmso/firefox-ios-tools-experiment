@@ -2,15 +2,12 @@ name: L10n Focus iOS screenshots
 on:
   workflow_dispatch:
 
-env:
-  group1: ""
-  group2: ""
-  group3: ""
-
 jobs:
   determine-locales:
     name: Determine lists of locales
     runs-on: macos-15
+    outputs:
+      groups: ${{ steps.confirm.outputs.groups }}
     steps:
       - name: Clone firefoxios-l01n repo
         uses: actions/checkout@v4
@@ -28,10 +25,9 @@ jobs:
           echo "locales=$group2" >> $GITHUB_ENV
           echo "locales=$group3" >> $GITHUB_ENV
       - name: Confirm list of locales
+        id: confirm
         run: |
-          echo "group1: ${{ env.group1 }}"
-          echo "group2: ${{ env.group2 }}"
-          echo "group3: ${{ env.group3 }}"
+          echo "groups=\"$group1\",\"$group2\",\"$groups3\"" >> $GITHUB_OUTPUT
 
   generate-screenshots:
     name: Generate Screenshots
@@ -40,7 +36,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        locales: [ "ab", "es", "fr" ]
+        locales: [ "${{ needs.determine-locales.outputs.groups }}" ]
     uses: ./.github/workflows/L10n-focus-locales.yml
     with:
       locale_group: "${{ matrix.locales }}"
