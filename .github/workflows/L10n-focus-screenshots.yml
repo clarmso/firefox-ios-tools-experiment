@@ -2,11 +2,41 @@ name: L10n Focus iOS screenshots
 on:
   workflow_dispatch:
 
+env:
+  group1: ""
+  group2: ""
+  group3: ""
+
 jobs:
-    generate-screenshots:
-      strategy:
-        matrix: 
-          group: [ "1", "2", "3" ]
-      uses: ./.github/workflows/L10n-focus-locales.yml
-      with:
-        locale_group: "${{ matrix.group }}"
+  determine-locales:
+    runs-on: macos-15
+    steps:
+      - name: Clone firefoxios-l01n repo
+        uses: actions/checkout@v4
+        with:
+          repository: mozilla-l10n/firefoxios-l10n
+      - name: Determine locales needed
+        id: my_locales
+        run: |
+          ls | grep -e "^..$" -e "^..-..$" > locales.txt
+          split -n 3 locales.txt locales-
+          group1=`tr '\n' ' ' < locales-aa`
+          group2=`tr '\n' ' ' < locales-ab`
+          group3=`tr '\n' ' ' < locales-ac`
+          echo "locales=$group1" >> $GITHUB_ENV
+          echo "locales=$group2" >> $GITHUB_ENV
+          echo "locales=$group3" >> $GITHUB_ENV
+      - name: Confirm list of locales
+        run: |
+          echo "group1: ${{ env.group1 }}"
+          echo "group2: ${{ env.group2 }}"
+          echo "group3: ${{ env.group3 }}"
+
+  generate-screenshots:
+    needs: determine-locales
+    strategy:
+      matrix: 
+        locales: [ ${{ env.group1 }}, ${{ env.group2 }}, ${{ env.group3 }} ]
+    uses: ./.github/workflows/L10n-focus-locales.yml
+    with:
+      locale_group: "${{ matrix.locales }}"
