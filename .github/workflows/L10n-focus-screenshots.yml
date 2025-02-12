@@ -7,7 +7,9 @@ jobs:
     name: Determine lists of locales
     runs-on: macos-15
     outputs:
-      groups: ${{ steps.my_locales.outputs.groups }}
+      group1: ${{ steps.my_locales.outputs.group1 }}
+      group2: ${{ steps.my_locales.outputs.group2 }}
+      group3: ${{ steps.my_locales.outputs.group3 }}
     steps:
       - name: Clone firefoxios-l01n repo
         uses: actions/checkout@v4
@@ -21,10 +23,9 @@ jobs:
           group1=`tr '\n' ' ' < locales-aa`
           group2=`tr '\n' ' ' < locales-ab`
           group3=`tr '\n' ' ' < locales-ac`
-          echo $group1
-          echo $group2
-          echo $group3
-          echo "groups=[\"$group1\",\"$group2\",\"$groups3\"]" >> $GITHUB_OUTPUT
+          echo "group1=$group1" >> $GITHUB_OUTPUT
+          echo "group2=$group2" >> $GITHUB_OUTPUT
+          echo "group3=$group3" >> $GITHUB_OUTPUT
   
   generate-screenshots:
     name: Generate Screenshots
@@ -33,7 +34,10 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        locales: [ "${{ needs.determine-locales.outputs.groups }}" ]
+        locales: [ 
+          "${{ needs.determine-locales.outputs.group1 }}", 
+          "${{ needs.determine-locales.outputs.group2 }}",
+          "${{ needs.determine-locales.outputs.group3 }}"]  
     uses: ./.github/workflows/L10n-focus-locales.yml
     with:
       locales: "${{ matrix.locales }}"
