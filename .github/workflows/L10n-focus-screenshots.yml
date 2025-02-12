@@ -27,7 +27,7 @@ jobs:
       - name: Confirm list of locales
         id: confirm
         run: |
-          echo "groups=\"$group1\",\"$group2\",\"$groups3\"" >> $GITHUB_OUTPUT
+          echo "groups=[\"$group1\",\"$group2\",\"$groups3\"]" >> $GITHUB_OUTPUT
 
   generate-screenshots:
     name: Generate Screenshots
