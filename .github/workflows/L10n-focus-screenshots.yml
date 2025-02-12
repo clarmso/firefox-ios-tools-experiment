@@ -55,12 +55,13 @@ jobs:
             -project focus-ios/Blockzilla.xcodeproj \
             -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' \
             -derivedDataPath ~/l10n-screenshots-dd
+          tar -czvf ~/l10n-screenshots-dd.tar.gz ~/l10n-screenshots-dd
       - name: Save Derived Data
         id: upload-derived-data
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: xcode-l10n-focus-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
-          path: ~/l10n-screenshots-dd
+          path: ~/l10n-screenshots-dd.tar.gz
           retention-days: 2   
       
   generate-screenshots:

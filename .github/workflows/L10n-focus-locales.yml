@@ -37,7 +37,10 @@ jobs:
               uses: actions/download-artifact@v4
               with:
                 name: ${{ inputs.derived-data }}
-                path: ~/l10n-screenshots-dd        
+                path: ~/l10n-screenshots-dd.tar.gz
+            - name: Extract derived data
+              run: |
+                  tar -xzvf l10n-screenshots-dd.tar.gz
             - name: Generate screenshots
               continue-on-error: true
               run: |
