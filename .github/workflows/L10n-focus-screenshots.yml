@@ -55,7 +55,10 @@ jobs:
             -project focus-ios/Blockzilla.xcodeproj \
             -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' \
             -derivedDataPath l10n-screenshots-dd
+      - name: Targzip Derived Data
+        run: |
           tar -czvf l10n-screenshots-dd.tar.gz l10n-screenshots-dd/*
+          ls -la *.tar.gz
       - name: Save Derived Data
         id: upload-derived-data
         uses: actions/upload-artifact@v4.6.0
