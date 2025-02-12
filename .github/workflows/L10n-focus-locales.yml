@@ -9,6 +9,10 @@ on:
         required: false
         type: string
         default: "main"
+      derived-data:
+        required: true
+        type: string
+        default: ""
 
 jobs:
     get-screenshots:
@@ -28,12 +32,12 @@ jobs:
             - name: Run setup scripts for Focus
               run: |
                   ./checkout.sh
-            - name: Compile Focus iOS
-              run: |
-                  xcodebuild build-for-testing -scheme FocusSnapshotTests \
-                    -project focus-ios/Blockzilla.xcodeproj \
-                    -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' \
-                    -derivedDataPath l10n-screenshots-dd
+            - name: Fetch derived data
+              id: download-derived-data
+              uses: actions/download-artifact@v4
+              with:
+                name: ${{ inputs.derived-data }}
+                path: ~/l10n-screenshots-dd        
             - name: Generate screenshots
               continue-on-error: true
               run: |

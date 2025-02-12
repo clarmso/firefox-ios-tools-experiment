@@ -1,6 +1,11 @@
 name: L10n Focus iOS screenshots
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        required: false
+        type: string
+        default: "main"
 
 jobs:
   determine-locales:
@@ -27,12 +32,43 @@ jobs:
           echo "group2=$group2" >> $GITHUB_OUTPUT
           echo "group3=$group3" >> $GITHUB_OUTPUT
   
+  compile:
+    name: Compile Focus for L10n
+    runs-on: macos-15
+    steps:
+      - name: Clone firefox-ios repo
+        uses: actions/checkout@v4
+        with:
+          repository: mozilla-mobile/firefox-ios
+          ref: ${{ inputs.branch }}
+      - name: Setup Xcode
+        run: |
+          sudo rm -rf /Applications/Xcode.app
+          sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
+          xcodebuild -version
+      - name: Run setup scripts for Focus
+        run: |
+          ./checkout.sh
+      - name: Compile Focus iOS
+        run: |
+          xcodebuild build-for-testing -scheme FocusSnapshotTests \
+            -project focus-ios/Blockzilla.xcodeproj \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.2' \
+            -derivedDataPath l10n-screenshots-dd
+      - name: Save Derived Data
+        id: upload-derived-data
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: xcode-l10n-focus-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
+          path: ~/l10n-screenshots-dd
+          retention-days: 2   
+      
   generate-screenshots:
     name: Generate Screenshots
-    needs: determine-locales
+    needs: [determine-locales, compile]
     strategy:
       fail-fast: false
-      max-parallel: 3
+      max-parallel: 2
       matrix:
         locales: [ 
           "${{ needs.determine-locales.outputs.group1 }}", 
@@ -41,3 +77,5 @@ jobs:
     uses: ./.github/workflows/L10n-focus-locales.yml
     with:
       locales: "${{ matrix.locales }}"
+      branch: "${{ inputs.branch }}"
+      derived-data: "xcode-l10n-focus-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}"
