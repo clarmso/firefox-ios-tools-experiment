@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       branch:
+        description: "Branch from firefox-ios repo"
         required: false
         type: string
         default: "main"
