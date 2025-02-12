@@ -39,4 +39,4 @@ jobs:
         locales: [ "${{ needs.determine-locales.outputs.groups }}" ]
     uses: ./.github/workflows/L10n-focus-locales.yml
     with:
-      locale_group: "${{ matrix.locales }}"
+      locales: "${{ matrix.locales }}"
