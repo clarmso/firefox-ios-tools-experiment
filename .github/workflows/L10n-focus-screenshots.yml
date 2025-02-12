@@ -9,6 +9,7 @@ env:
 
 jobs:
   determine-locales:
+    name: Determine lists of locales
     runs-on: macos-15
     steps:
       - name: Clone firefoxios-l01n repo
@@ -33,9 +34,12 @@ jobs:
           echo "group3: ${{ env.group3 }}"
 
   generate-screenshots:
+    name: Generate Screenshots
     needs: determine-locales
     strategy:
-      matrix: 
+      fail-fast: false
+      max-parallel: 1
+      matrix:
         locales: [ ${{ env.group1 }}, ${{ env.group2 }}, ${{ env.group3 }} ]
     uses: ./.github/workflows/L10n-focus-locales.yml
     with:
