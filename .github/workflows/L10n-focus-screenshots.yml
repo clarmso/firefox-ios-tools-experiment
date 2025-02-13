@@ -26,9 +26,12 @@ jobs:
         run: |
           ls | grep -e "^..$" -e "^..-..$" > locales.txt
           split -n 3 locales.txt locales-
-          group1=`tr '\n' ' ' < locales-aa`
-          group2=`tr '\n' ' ' < locales-ab`
-          group3=`tr '\n' ' ' < locales-ac`
+          group1="en-US"
+          group2="fr"
+          group3="es"
+          # group1=`tr '\n' ' ' < locales-aa`
+          # group2=`tr '\n' ' ' < locales-ab`
+          # group3=`tr '\n' ' ' < locales-ac`
           echo "group1=$group1" >> $GITHUB_OUTPUT
           echo "group2=$group2" >> $GITHUB_OUTPUT
           echo "group3=$group3" >> $GITHUB_OUTPUT
