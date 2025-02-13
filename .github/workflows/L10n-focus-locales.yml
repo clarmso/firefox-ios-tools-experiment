@@ -49,6 +49,6 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact/merge@v4
         with:
-          pattern: ./l10n-screenshots
+          pattern: ./l10n-screenshots/*
           retention-days: 90
           name: Screenshots
