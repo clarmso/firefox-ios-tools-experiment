@@ -24,7 +24,7 @@ jobs:
             "https://www.wikipedia.org",
             "https://www.youtube.com"
             )
-          for url in "${urls[@]}"; do:
+          for url in "${urls[@]}"; do
             curl -I "$url"
           done
 
