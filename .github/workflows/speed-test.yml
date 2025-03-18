@@ -23,6 +23,8 @@ jobs:
             "https://www.mozilla.org/en-US/book/"
             "https://www.wikipedia.org"
             "https://www.youtube.com"
+            "https://www.example.com"
+            "https://www.google.com/search?q=ps5&source=hp&ei=yDybY7_iBMSH9u8P-fWwkAs&iflsig=AJiK0e8AAAAAY5tK2K2eVYMzMJI3G8qcqgmnGdrC6UVp&ved=0ahUKEwi_5s_h9_v7AhXEg_0HHfk6DLIQ4dUDCAg&uact=5&oq=ps5&gs_lcp=Cgdnd3Mtd2l6EAMyBQgAEIAEMgUIABCABDIFCAAQgAQyBQgAEIAEMgUIABCABDIICAAQgAQQyQMyBQgAEIAEMgUIABCABDIFCAAQgAQyBQgAEIAEOgsILhCABBDHARDRAzoFCC4QgAQ6CAguEIAEENQCUIoEWOwGYKIJaAFwAHgAgAFLiAHcAZIBATOYAQCgAQGwAQA&sclient=gws-wiz"
             )
           for url in "${urls[@]}"; do
             echo "Testing $url..."
