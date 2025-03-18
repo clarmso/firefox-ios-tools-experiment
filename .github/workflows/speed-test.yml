@@ -1,0 +1,29 @@
+name: Test Network Connection
+
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  test-network:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-15, ubuntu-latest]
+    steps:
+      - name: Test network connection
+        run: |
+          echo "Testing network connection on ${{ matrix.os }}..."
+          
+          # Ping a reliable host to test connectivity
+          echo "Pinging google.com..."
+          ping -c 4 google.com
+
+          # Check if curl can reach a specific URL
+          echo "Testing HTTP connection with curl..."
+          curl -I https://www.google.com
+
+          # Output the public IP address of the runner
+          echo "Fetching public IP address..."
+          curl -s https://api.ipify.org && echo
+
+          echo "Network connection test completed."
