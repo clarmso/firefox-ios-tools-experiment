@@ -18,10 +18,10 @@ jobs:
           # Check if curl can reach a specific URL
           echo "Testing HTTP connection with curl..."
           urls=(
-            "https://www.google.com", 
-            "https://www.mozilla.org/en-US/firefox/products",
-            "https://www.mozilla.org/en-US/book/",
-            "https://www.wikipedia.org",
+            "https://www.google.com"
+            "https://www.mozilla.org/en-US/firefox/products"
+            "https://www.mozilla.org/en-US/book/"
+            "https://www.wikipedia.org"
             "https://www.youtube.com"
             )
           for url in "${urls[@]}"; do
