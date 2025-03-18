@@ -26,7 +26,7 @@ jobs:
             )
           for url in "${urls[@]}"; do
             echo "Testing $url..."
-            curl -I "$url"
+            curl -I $url
           done
 
           echo "Network connection test completed."
