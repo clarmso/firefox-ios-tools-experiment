@@ -9,6 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-15, ubuntu-latest]
+
     steps:
       - name: Test network connection
         run: |
@@ -16,11 +17,15 @@ jobs:
 
           # Check if curl can reach a specific URL
           echo "Testing HTTP connection with curl..."
-          curl -I https://www.google.com
-          curl -I https://www.mozilla.org
-
-          # Output the public IP address of the runner
-          echo "Fetching public IP address..."
-          curl -s https://api.ipify.org && echo
+          urls=(
+            "https://www.google.com", 
+            "https://www.mozilla.org/en-US/firefox/products",
+            "https://www.mozilla.org/en-US/book/",
+            "https://www.wikipedia.org",
+            "https://www.youtube.com"
+            )
+          for url in "${urls[@]}"; do:
+            curl -I "$url"
+          done
 
           echo "Network connection test completed."
