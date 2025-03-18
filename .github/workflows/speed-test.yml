@@ -25,6 +25,7 @@ jobs:
             "https://www.youtube.com"
             )
           for url in "${urls[@]}"; do
+            echo "Testing $url..."
             curl -I "$url"
           done
 
